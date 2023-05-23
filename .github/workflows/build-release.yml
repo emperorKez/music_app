@@ -163,8 +163,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
         with:
           # body_path: ${{ github.workspace }}-CHANGELOG.txt
-          tag_name: ${{ github.ref }}
-          name: Release ${{ github.ref }}
+          # tag_name: ${{ github.ref }}
+          tag_name: release
+          # name: Release ${{ github.ref }}
+          name: Release
           # draft: true
           prerelease: false
           generate_release_notes: true
