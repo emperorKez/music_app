@@ -151,13 +151,13 @@ jobs:
         if: matrix.target == 'Web'
         run: |
           zip web.zip web
-          mv web ${{ github.workspace }}/music_app_${{ matrix.target }}
+          mv web.zip ${{ github.workspace }}/music_app_${{ matrix.target }}
         working-directory: ${{ matrix.build_path }}
 
       - name: Draft release with release notes
         id: create_release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+        # if: startsWith(github.ref, 'refs/tags/')
         # uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
@@ -165,7 +165,7 @@ jobs:
           body_path: ${{ github.workspace }}-CHANGELOG.txt
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          draft: true
+          # draft: true
           prerelease: false
           generate_release_notes: true
           files: |
