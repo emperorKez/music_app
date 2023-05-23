@@ -20,29 +20,29 @@ jobs:
         # target: [macOS, Windows, Linux, Android, IOS, Web]
         target: [Android, Web]
         include:
-          # for macOs
-          - os: macos-latest
-            target: macOS
-            build_target: macos
-            build_path: build/macos/Build/Products/Release
-            asset_extension: .zip
-            asset_content_type: application/zip
+          # # for macOs
+          # - os: macos-latest
+          #   target: macOS
+          #   build_target: macos
+          #   build_path: build/macos/Build/Products/Release
+          #   asset_extension: .zip
+          #   asset_content_type: application/zip
 
-          # for Windows
-          - os: windows-latest
-            target: Windows
-            build_target: windows
-            build_path: build\windows\runner\Release
-            asset_extension: .zip
-            asset_content_type: application/zip
+          # # for Windows
+          # - os: windows-latest
+          #   target: Windows
+          #   build_target: windows
+          #   build_path: build\windows\runner\Release
+          #   asset_extension: .zip
+          #   asset_content_type: application/zip
 
-          #for Linux
-          - os: ubuntu-latest
-            target: Linux
-            build_target: linux
-            build_path: build/linux/x64/release/bundle
-            asset_extension: .tar.gz
-            asset_content_type: application/gzip
+          # #for Linux
+          # - os: ubuntu-latest
+          #   target: Linux
+          #   build_target: linux
+          #   build_path: build/linux/x64/release/bundle
+          #   asset_extension: .tar.gz
+          #   asset_content_type: application/gzip
 
           # for Android
           - os: ubuntu-latest
@@ -52,13 +52,13 @@ jobs:
             asset_extension: .apk
             asset_content_type: application/vnd.android.package-archive
 
-          # for IOS
-          - os: ubuntu-latest
-            target: IOS
-            build_target: ios --no-codesign
-            build_path: build/app/outputs/flutter-apk
-            asset_extension: .apk
-            asset_content_type: application/vnd.android.package-archive
+          # # for IOS
+          # - os: ubuntu-latest
+          #   target: IOS
+          #   build_target: ios --no-codesign
+          #   build_path: build/app/outputs/flutter-apk
+          #   asset_extension: .apk
+          #   asset_content_type: application/vnd.android.package-archive
 
           # for web
           - os: ubuntu-latest
