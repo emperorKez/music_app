@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         # target: [macOS, Windows, Linux, Android, IOS, Web]
-        target: [Web]
+        target: [Android, Web]
         include:
           # # for macOs
           # - os: macos-latest
@@ -44,13 +44,13 @@ jobs:
           #   asset_extension: .tar.gz
           #   asset_content_type: application/gzip
 
-          # # for Android
-          # - os: ubuntu-latest
-          #   target: Android
-          #   build_target: apk --debug
-          #   build_path: build/app/outputs/flutter-apk
-          #   asset_extension: .apk
-          #   asset_content_type: application/vnd.android.package-archive
+          # for Android
+          - os: ubuntu-latest
+            target: Android
+            build_target: apk --debug
+            build_path: build/app/outputs/flutter-apk
+            asset_extension: .apk
+            asset_content_type: application/vnd.android.package-archive
 
           # # for IOS
           # - os: ubuntu-latest
@@ -64,14 +64,12 @@ jobs:
           - os: ubuntu-latest
             target: Web
             build_target: web
-            build_path: build
+            build_path: build/we
             asset_extension: .zip
             asset_content_type: application/zip
     steps:
       - uses: actions/checkout@v3
-
-      
-          
+    
       # Set up Flutter.
       - name: Clone Flutter repository with master channel
         # uses: subosito/flutter-action@48cafc24713cca54bbe03cdc3a423187d413aafa
@@ -150,7 +148,7 @@ jobs:
       - name: Compress build for Web
         if: matrix.target == 'Web'
         run: |
-          zip web.zip web
+          zip web.zip *
           mv web.zip ${{ github.workspace }}/music_app_${{ matrix.target }}.zip
         working-directory: ${{ matrix.build_path }}
 
