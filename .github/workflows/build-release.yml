@@ -12,8 +12,8 @@ jobs:
   draft-release:
     name: Build ${{ matrix.target }}
     runs-on: macos-latest
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    # outputs:
+    #   upload_url: ${{ steps.create_release.outputs.upload_url }}
     strategy:
       fail-fast: false
       matrix:
@@ -44,13 +44,13 @@ jobs:
           #   asset_extension: .tar.gz
           #   asset_content_type: application/gzip
 
-          # for Android
-          - os: ubuntu-latest
-            target: Android
-            build_target: apk --debug
-            build_path: build/app/outputs/flutter-apk
-            asset_extension: .apk
-            asset_content_type: application/vnd.android.package-archive
+          # # for Android
+          # - os: ubuntu-latest
+          #   target: Android
+          #   build_target: apk --debug
+          #   build_path: build/app/outputs/flutter-apk
+          #   asset_extension: .apk
+          #   asset_content_type: application/vnd.android.package-archive
 
           # # for IOS
           # - os: ubuntu-latest
@@ -70,20 +70,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Draft release with release notes
-        id: create_release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        # uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
-        with:
-          body_path: ${{ github.workspace }}-CHANGELOG.txt
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: true
-          prerelease: false
-          generate_release_notes: true
+      
           
       # Set up Flutter.
       - name: Clone Flutter repository with master channel
@@ -164,17 +151,34 @@ jobs:
         if: matrix.target == 'Web'
         run: |
           zip web.zip web
-          mv web $GITHUB_WORKSPACE/music_app_${{ matrix.target }}
+          mv web ${{ github.workspace }}/music_app_${{ matrix.target }}
         working-directory: ${{ matrix.build_path }}
 
-      # Upload the build.
-      - name: Add packaged build to release draft
-        id: upload_release_asset
-        uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5
+      - name: Draft release with release notes
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        # uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url}}
-          asset_path: ./music_app_${{ matrix.target }}${{ matrix.asset_extension }}
-          asset_name: music_app_${{ matrix.target }}${{ matrix.asset_extension }}
-          asset_content_type: ${{ matrix.asset_content_type }}
+          body_path: ${{ github.workspace }}-CHANGELOG.txt
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: true
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            music_app_${{ matrix.target }}${{ matrix.asset_extension }}
+
+      # # Upload the build.
+      # - name: Add packaged build to release draft
+      #   id: upload_release_asset
+      #   uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url}}
+      #     asset_path: ./music_app_${{ matrix.target }}${{ matrix.asset_extension }}
+      #     asset_name: music_app_${{ matrix.target }}${{ matrix.asset_extension }}
+      #     asset_content_type: ${{ matrix.asset_content_type }}
