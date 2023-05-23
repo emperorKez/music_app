@@ -151,7 +151,7 @@ jobs:
         if: matrix.target == 'Web'
         run: |
           zip web.zip web
-          mv web.zip ${{ github.workspace }}/music_app_${{ matrix.target }}
+          mv web.zip ${{ github.workspace }}/music_app_${{ matrix.target }}.zip
         working-directory: ${{ matrix.build_path }}
 
       - name: Draft release with release notes
@@ -162,9 +162,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
         with:
-          body_path: ${{ github.workspace }}-CHANGELOG.txt
+          # body_path: ${{ github.workspace }}-CHANGELOG.txt
           tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          name: Release ${{ github.ref }}
           # draft: true
           prerelease: false
           generate_release_notes: true
