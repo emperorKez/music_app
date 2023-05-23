@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         # target: [macOS, Windows, Linux, Android, IOS, Web]
-        target: [Android, Web]
+        target: [Web]
         include:
           # # for macOs
           # - os: macos-latest
