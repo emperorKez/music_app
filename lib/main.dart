@@ -15,7 +15,17 @@ class MyApp extends StatelessWidget {
       title: 'Music App',
       theme: ThemeData(
         useMaterial3: true,
-        primaryColor: Color(0xff3B1164),
+        primaryColor: const Color(0xffC624B4),
+        scaffoldBackgroundColor: const Color(0xff3B1164),
+        primaryTextTheme: const TextTheme(),
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(color: Colors.white),
+          bodySmall: TextStyle(color: Colors.white),
+        ),
+        appBarTheme: const AppBarTheme(color: Color(0xff3B1164)),
+        elevatedButtonTheme: const ElevatedButtonThemeData(
+          style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Color(0xffC624B4)))
+        ),
         // This is the theme of your application.
         //
         // Try running your application with "flutter run". You'll see the
@@ -27,6 +37,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
+      debugShowCheckedModeBanner: false,
       home: const HomeScreen(),
     );
   }
