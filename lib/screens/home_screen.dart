@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:music_app/data.dart';
+import 'package:music_app/screens/now_playing.dart';
+import 'package:music_app/screens/playlist_screen.dart';
+import 'package:music_app/screens/song_list_screen.dart';
+import 'package:music_app/utils/data.dart';
 import 'package:music_app/drawer.dart';
-import 'package:music_app/pages/now_playing.dart';
-import 'package:music_app/pages/playlist_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,20 +20,18 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: searchBar(),
-      ),
-      drawer: const AppDrawer(),
-      body: Stack(
-        children: [
-          Column(mainAxisSize: MainAxisSize.min, children: [
-            playlistContainer(),
-            Expanded(child: favoritesContainer())
-          ])
-        ],
-      ),
-    ));
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              title: searchBar(),
+            ),
+            drawer: const AppDrawer(),
+            body: body()));
+  }
+
+  Widget body() {
+    return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [playlistContainer(), Expanded(child: favoritesContainer())]);
   }
 
   Widget searchBar() {
@@ -40,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
       key: _formkey,
       child: TextFormField(
           keyboardType: TextInputType.text,
-          autofocus: true,
+          autofocus: false,
           onChanged: (value) {},
           decoration: const InputDecoration(
               isDense: true,
@@ -119,7 +118,16 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Your Favourites'),
+           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+             children: [
+               const Text('Your Favourites'),
+               GestureDetector(
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SongListScreen())),
+                child: const Text('All Songs'),
+               )
+             ],
+           ),
           const SizedBox(
             height: 15,
           ),
@@ -129,11 +137,11 @@ class _HomeScreenState extends State<HomeScreen> {
             itemCount: favouriteSongs.length,
             itemBuilder: (BuildContext context, int index) {
               return ListTile(
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              NowPlaying(song: favouriteSongs[index]))),
+                  // onTap: () => Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) =>
+                  //             NowPlaying(song: favouriteSongs[index]))),
                   contentPadding: EdgeInsets.zero,
                   leading: AspectRatio(
                     aspectRatio: 1,

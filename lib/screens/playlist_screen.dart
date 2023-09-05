@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-import 'package:music_app/data.dart';
+import 'package:music_app/screens/now_playing.dart';
+import 'package:music_app/utils/data.dart';
 
 
 class PlaylistScreen extends StatelessWidget {
@@ -41,10 +42,10 @@ class PlaylistScreen extends StatelessWidget {
         itemCount: songlist.length,
         itemBuilder: (BuildContext context, int index) {
           return ListTile(
-              onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => NowPlaying(song: songlist[index]))),
+              // onTap: () => Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //         builder: (context) => NowPlaying(song: songlist[index]))),
               contentPadding: EdgeInsets.zero,
               leading: AspectRatio(
                 aspectRatio: 1,

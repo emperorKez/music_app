@@ -33,6 +33,16 @@ dependencies:
 
   just_audio_background:
   just_audio:
+  audio_session:
+  path_provider:
+
+  on_audio_query: ^2.9.0
+  # audio_video_progress_bar:
+  # audioplayers: ^5.1.0
+
+  flutter_bloc: 
+  hydrated_bloc: 
+  rxdart:
 
 
   # The following adds the Cupertino Icons font to your application.
