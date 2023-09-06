@@ -2,21 +2,35 @@ import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:music_app/utils/common.dart';
-import 'package:music_app/widgets/control_button.dart';
+import 'package:music_app/player/utils/common.dart';
+import 'package:music_app/player/utils/control_button.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:rxdart/rxdart.dart';
 
 class NowPlaying extends StatefulWidget {
-  const NowPlaying({required this.song, super.key});
+  const NowPlaying({required this.song, required this.playlist, this.songIndex, super.key});
   final SongModel song;
+  final ConcatenatingAudioSource playlist;
+  final int? songIndex;
 
   @override
   State<NowPlaying> createState() => _NowPlayingState();
+  
 }
 
 class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
-  final player = AudioPlayer();
+  final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+  final _equalizer = AndroidEqualizer();
+  final _loudnessEnhancer = AndroidLoudnessEnhancer();
+  late final player = AudioPlayer(
+    audioPipeline: AudioPipeline(
+      androidAudioEffects: [
+        _loudnessEnhancer,
+        _equalizer
+      ]
+    )
+  );
+  
 
   @override
   void initState() {
@@ -41,13 +55,33 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
     // Try to load audio from a source and catch any errors.
     try {
       // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
-      await player.setAudioSource(AudioSource.file(widget.song.uri!));
-      // .uri(Uri.parse(
-      //     "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3"))
+      await player.setAudioSource(
+        widget.playlist, initialIndex: widget.songIndex
+      );
+
+        // AudioSource.
+        //   file(widget.song.data));
+          // uri(Uri.parse(
+          //     "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3")));
     } catch (e) {
       print("Error loading audio source: $e");
     }
+
+    // Show a snackbar whenever reaching the end of an item in the playlist.
+    // player.positionDiscontinuityStream.listen((discontinuity) {
+    //   if (discontinuity.reason == PositionDiscontinuityReason.autoAdvance) {
+    //     showItemFinished(discontinuity.previousEvent.currentIndex);
+    //   }
+    // });
+    // player.processingStateStream.listen((state) {
+    //   if (state == ProcessingState.completed) {
+    //     showItemFinished(player.currentIndex);
+    //   }
+    // });
   }
+
+
+
 
   @override
   void dispose() {
@@ -70,7 +104,7 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
 
   /// Collects the data useful for displaying in a seek bar, using a handy
   /// feature of rx_dart to combine the 3 streams of interest into one.
-  Stream<PositionData> get _positionDataStream =>
+  Stream<PositionData> get positionDataStream =>
       Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
           player.positionStream,
           player.bufferedPositionStream,
@@ -80,6 +114,12 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    print('%%%%%%%%%%%%%%%%%%%%%%%%%%');
+    print(widget.song.uri);
+    print(widget.song.track);
+    print(widget.song.fileExtension);
+    print(widget.song.data);
+
     return SafeArea(
         child: Scaffold(
             appBar: AppBar(
@@ -201,7 +241,7 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
     // Display seek bar. Using StreamBuilder, this widget rebuilds
     // each time the position, buffered position or duration changes.
     return StreamBuilder<PositionData>(
-      stream: _positionDataStream,
+      stream: positionDataStream,
       builder: (context, snapshot) {
         final positionData = snapshot.data;
         return SeekBar(
@@ -213,4 +253,35 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
       },
     );
   }
+
+
+
+  // void showItemFinished(int? index) {
+  //   if (index == null) return;
+  //   final sequence = player.sequence;
+  //   if (sequence == null) return;
+  //   final source = sequence[index];
+  //   // final metadata = source.tag as AudioMetadata;
+  //   _scaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
+  //     content: Text('Finished playing ${metadata.title}'),
+  //     duration: const Duration(seconds: 1),
+  //   ));
+  // }
+
+
 }
+
+
+
+
+// class AudioMetadata {
+//   final String album;
+//   final String title;
+//   final String artwork;
+
+//   AudioMetadata({
+//     required this.album,
+//     required this.title,
+//     required this.artwork,
+//   });
+// }

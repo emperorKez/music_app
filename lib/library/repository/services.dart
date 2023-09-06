@@ -1,7 +1,7 @@
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-class AppRepository {
+class LibraryRepository {
   final OnAudioQuery audioQuery = OnAudioQuery();
 
   getLocalSongs() async {
@@ -19,16 +19,33 @@ class AppRepository {
 
   fetchSonges() async {
     // Query Audios
-    List<SongModel> songs = await audioQuery.querySongs(sortType: SongSortType.TITLE, orderType: OrderType.DESC_OR_GREATER);
+    List<SongModel> songs = await audioQuery.querySongs(sortType: SongSortType.TITLE, orderType: OrderType.ASC_OR_SMALLER, );
     return songs;
 
     //Query Artwork
     //Uint8List artwork = await audioQuery.queryArtwork(id, type)
   }
+
+
   fetchAlbums() async {
     // Query Albums
     List<AlbumModel> albums = await audioQuery.queryAlbums();
     return albums;
+
+  }
+
+
+  fetchGenres() async {
+    // Query Albums
+    List<GenreModel> genres = await audioQuery.queryGenres();
+    
+    return genres;
+
+  }
+  fetchArtists() async {
+    // Query Albums
+    List<ArtistModel> artists = await audioQuery.queryArtists();
+    return artists;
 
   }
 }

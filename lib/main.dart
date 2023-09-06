@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:music_app/blocs/app_bloc/app_bloc.dart';
-import 'package:music_app/blocs/audio_query_bloc/audio_query_bloc.dart';
-import 'package:music_app/repositories/services.dart';
-import 'package:music_app/screens/home_screen.dart';
-import 'package:music_app/utils/theme.dart';
+import 'package:music_app/app/bloc/app_bloc/app_bloc.dart';
+import 'package:music_app/app/view/screen/home_screen.dart';
+import 'package:music_app/app/common/theme.dart';
+import 'package:music_app/library/bloc/library_fetch_bloc/library_fetch_bloc.dart';
+import 'package:music_app/library/repository/services.dart'; 
 void main() {
   runApp(const MyApp());
 }
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => AppBloc()),
         BlocProvider(
-          create: (context) => AudioQueryBloc(appRepo: AppRepository()) ..add(FetchLocalSongs()),
+          create: (context) => LibraryBloc(appRepo: LibraryRepository()) ..add(FetchLibraryData()),
           lazy: false,
         ),
       ],

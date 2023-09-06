@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:music_app/screens/now_playing.dart';
-import 'package:music_app/screens/playlist_screen.dart';
-import 'package:music_app/screens/song_list_screen.dart';
-import 'package:music_app/utils/data.dart';
-import 'package:music_app/drawer.dart';
+import 'package:music_app/player/screen/now_playing.dart';
+import 'package:music_app/library/view/screen/playlist_screen.dart';
+import 'package:music_app/library/view/screen/local_songs.dart';
+import 'package:music_app/app/view/widget/data.dart';
+import 'package:music_app/app/common/drawer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:flutter/services.dart';
-import 'package:music_app/utils/common.dart';
+import 'package:music_app/player/utils/common.dart';
 
 class ControlButtons extends StatelessWidget {
   const ControlButtons({required this.player, super.key});
@@ -9,8 +8,10 @@ class ControlButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return Row(
       mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         // Opens volume slider dialog
         IconButton(
@@ -27,6 +28,14 @@ class ControlButtons extends StatelessWidget {
               onChanged: player.setVolume,
             );
           },
+        ),
+
+        StreamBuilder<SequenceState?>(
+          stream: player.sequenceStateStream,
+          builder: (context, snapshot) => IconButton(
+            icon: const Icon(Icons.skip_previous),
+            onPressed: player.hasPrevious ? player.seekToPrevious : null,
+          ),
         ),
 
         /// This StreamBuilder rebuilds whenever the player state changes, which
@@ -49,25 +58,35 @@ class ControlButtons extends StatelessWidget {
               );
             } else if (playing != true) {
               return IconButton(
-                icon: const Icon(Icons.play_arrow),
-                iconSize: 64.0,
-                onPressed: player.play,
-              );
+                  icon: const Icon(Icons.play_arrow),
+                  // iconSize: 64.0,
+                  onPressed: player.play,
+                  color: Colors.white);
             } else if (processingState != ProcessingState.completed) {
               return IconButton(
-                icon: const Icon(Icons.pause),
-                iconSize: 64.0,
-                onPressed: player.pause,
-              );
+                  icon: const Icon(Icons.pause),
+                  // iconSize: 64.0,
+                  onPressed: player.pause,
+                  color: Colors.white);
             } else {
               return IconButton(
-                icon: const Icon(Icons.replay),
-                iconSize: 64.0,
-                onPressed: () => player.seek(Duration.zero),
-              );
+                  icon: const Icon(Icons.replay),
+                  // iconSize: 64.0,
+                  onPressed: () => player.seek(Duration.zero),
+                  color: Colors.white);
             }
           },
         ),
+
+        StreamBuilder<SequenceState?>(
+          stream: player.sequenceStateStream,
+          builder: (context, snapshot) => IconButton(
+            icon: const Icon(Icons.skip_next),
+            onPressed: player.hasNext ? player.seekToNext : null,
+          ),
+        ),
+
+        
         // Opens speed slider dialog
         StreamBuilder<double>(
           stream: player.speedStream,
