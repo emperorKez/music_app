@@ -2,20 +2,23 @@ import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:music_app/library/view/screen/local_songs.dart';
 import 'package:music_app/player/utils/common.dart';
 import 'package:music_app/player/utils/control_button.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../widget/enhancement.dart';
+
 class NowPlaying extends StatefulWidget {
-  const NowPlaying({required this.song, required this.playlist, this.songIndex, super.key});
+  const NowPlaying(
+      {required this.song, required this.playlist, this.songIndex, super.key});
   final SongModel song;
   final ConcatenatingAudioSource playlist;
   final int? songIndex;
 
   @override
   State<NowPlaying> createState() => _NowPlayingState();
-  
 }
 
 class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
@@ -23,14 +26,8 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
   final _equalizer = AndroidEqualizer();
   final _loudnessEnhancer = AndroidLoudnessEnhancer();
   late final player = AudioPlayer(
-    audioPipeline: AudioPipeline(
-      androidAudioEffects: [
-        _loudnessEnhancer,
-        _equalizer
-      ]
-    )
-  );
-  
+      audioPipeline:
+          AudioPipeline(androidAudioEffects: [_loudnessEnhancer, _equalizer]));
 
   @override
   void initState() {
@@ -55,14 +52,13 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
     // Try to load audio from a source and catch any errors.
     try {
       // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
-      await player.setAudioSource(
-        widget.playlist, initialIndex: widget.songIndex
-      );
+      await player.setAudioSource(widget.playlist,
+          initialIndex: widget.songIndex);
 
-        // AudioSource.
-        //   file(widget.song.data));
-          // uri(Uri.parse(
-          //     "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3")));
+      // AudioSource.
+      //   file(widget.song.data));
+      // uri(Uri.parse(
+      //     "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3")));
     } catch (e) {
       print("Error loading audio source: $e");
     }
@@ -79,9 +75,6 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
     //   }
     // });
   }
-
-
-
 
   @override
   void dispose() {
@@ -114,11 +107,9 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    print('%%%%%%%%%%%%%%%%%%%%%%%%%%');
-    print(widget.song.uri);
-    print(widget.song.track);
-    print(widget.song.fileExtension);
-    print(widget.song.data);
+    // final sequence = player.sequence;
+    // final source = sequence![player.currentIndex!];
+    // final metadata = source.tag as AudioMetadata;
 
     return SafeArea(
         child: Scaffold(
@@ -142,46 +133,62 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
   }
 
   Widget body() {
-    return Padding(
-      padding: const EdgeInsets.all(15),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Center(
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: QueryArtworkWidget(
-                    id: widget.song.id,
-                    type: ArtworkType.AUDIO,
+    return StreamBuilder<SequenceState?>(
+        stream: player.sequenceStateStream,
+        builder: (context, snapshot) {
+          final state = snapshot.data;
+          if (state?.sequence.isEmpty ?? true) {
+            return const SizedBox();
+          }
+          final metadata = state!.currentSource!.tag as AudioMetadata;
+
+          return Padding(
+            padding: const EdgeInsets.all(15),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Center(
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: metadata.artwork ?? Image.asset(
+                          'assets/images/image2.png',
+                          fit: BoxFit.fill,
+                        ),
+
+                        // QueryArtworkWidget(
+                        //   id: widget.song.id,
+                        //   type: ArtworkType.AUDIO,
+                        // ),
+                        // Image.asset(
+                        //   song.artwork,
+                        //   fit: BoxFit.fill,
+                        // ),
+                      ),
+                    ),
                   ),
-                  // Image.asset(
-                  //   song.artwork,
-                  //   fit: BoxFit.fill,
-                  // ),
                 ),
-              ),
+
+                //const Spacer(),
+                songDetail(metadata),
+                const SizedBox(
+                  height: 20,
+                ),
+                songProgressBar(player),
+                const SizedBox(
+                  height: 20,
+                ),
+                ControlButtons(player: player)
+              ],
             ),
-          ),
-          //const Spacer(),
-          songDetail(),
-          const SizedBox(
-            height: 20,
-          ),
-          songProgressBar(player),
-          const SizedBox(
-            height: 20,
-          ),
-          ControlButtons(player: player)
-        ],
-      ),
-    );
+          );
+        });
   }
 
-  Widget songDetail() {
+  Widget songDetail(AudioMetadata metadata) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,14 +197,14 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              widget.song.title,
+              metadata.title,
               style: const TextStyle(fontSize: 16, color: Colors.white),
             ),
             IconButton(
                 onPressed: () {}, icon: const Icon(Icons.favorite_outline))
           ],
         ),
-        Text(widget.song.artist!)
+        Text(metadata.artist)
       ],
     );
   }
@@ -254,21 +261,17 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
     );
   }
 
-
-
   // void showItemFinished(int? index) {
   //   if (index == null) return;
   //   final sequence = player.sequence;
   //   if (sequence == null) return;
   //   final source = sequence[index];
-  //   // final metadata = source.tag as AudioMetadata;
+  // final metadata = source.tag as AudioMetadata;
   //   _scaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
   //     content: Text('Finished playing ${metadata.title}'),
   //     duration: const Duration(seconds: 1),
   //   ));
   // }
-
-
 }
 
 

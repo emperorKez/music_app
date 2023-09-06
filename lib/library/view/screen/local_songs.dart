@@ -85,8 +85,22 @@ class SongListScreen extends StatelessWidget {
 
   defaultPlaylist(List<SongModel> songList) {
     return ConcatenatingAudioSource(
-        children: List.generate(songList.length,
-            (index) => AudioSource.file(songList[index].data)));
+        children: List.generate(
+            songList.length,
+            (index) => AudioSource.file(songList[index].data,
+                tag: AudioMetadata(
+                  album: songList[index].album!,
+                  artist: songList[index].artist!,
+                  title: songList[index].title,
+                  artwork: QueryArtworkWidget(
+                    id: songList[index].id,
+                    type: ArtworkType.AUDIO,
+                    nullArtworkWidget: Image.asset(
+                      'assets/images/image2.png',
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ))));
   }
 
   // Widget songItem(SongModel song){
@@ -99,6 +113,20 @@ class SongListScreen extends StatelessWidget {
   //                       title: Text(song.title),
   //                       subtitle: Text(song.artist!),
   //                       trailing: Text('${song.duration}'),
-  //   )
+  //   );
   // }
+}
+
+class AudioMetadata {
+  final String title;
+  final String? album;
+  final String artist;
+  final Widget? artwork;
+
+  AudioMetadata({
+    required this.title,
+    required this.artist,
+    this.album,
+    this.artwork,
+  });
 }

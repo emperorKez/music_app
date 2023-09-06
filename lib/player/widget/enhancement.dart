@@ -13,6 +13,7 @@ class Enhancement extends StatelessWidget {
     return Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               StreamBuilder<bool>(
                 stream: loudnessEnhancer.enabledStream,
