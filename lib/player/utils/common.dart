@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 class SeekBar extends StatefulWidget {
   final Duration duration;
@@ -31,7 +32,9 @@ class SeekBarState extends State<SeekBar> {
     super.didChangeDependencies();
 
     _sliderThemeData = SliderTheme.of(context).copyWith(
-      trackHeight: 2.0,
+      trackHeight: 4.0,
+                  thumbShape: SliderComponentShape.noThumb,
+                trackShape: SliderCustomTrackShape()
     );
   }
 
@@ -94,7 +97,17 @@ class SeekBarState extends State<SeekBar> {
           ),
         ),
         Positioned(
-          right: 16.0,
+          left: 0.0,
+          bottom: 0.0,
+          child: Text(
+              RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$')
+                      .firstMatch("${widget.position}")
+                      ?.group(1) ??
+                  '${widget.position}',
+              style: Theme.of(context).textTheme.bodySmall),
+        ),
+        Positioned(
+          right: 0.0,
           bottom: 0.0,
           child: Text(
               RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$')
@@ -139,7 +152,49 @@ class PositionData {
   PositionData(this.position, this.bufferedPosition, this.duration);
 }
 
-void showSliderDialog({
+// void showSliderDialog({
+//   required BuildContext context,
+//   required String title,
+//   required int divisions,
+//   required double min,
+//   required double max,
+//   String valueSuffix = '',
+//   // TODO: Replace these two by ValueStream.
+//   required double value,
+//   required Stream<double> stream,
+//   required ValueChanged<double> onChanged,
+// }) {
+//   showDialog<void>(
+//     context: context,
+//     builder: (context) => AlertDialog(
+//       title: Text(title, textAlign: TextAlign.center),
+//       content: StreamBuilder<double>(
+//         stream: stream,
+//         builder: (context, snapshot) => SizedBox(
+//           height: 100.0,
+//           child: Column(
+//             children: [
+//               Text('${snapshot.data?.toStringAsFixed(1)}$valueSuffix',
+//                   style: const TextStyle(
+//                       fontFamily: 'Fixed',
+//                       fontWeight: FontWeight.bold,
+//                       fontSize: 24.0)),
+//               Slider(
+//                 divisions: divisions,
+//                 min: min,
+//                 max: max,
+//                 value: snapshot.data ?? value,
+//                 onChanged: onChanged,
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     ),
+//   );
+// }
+
+void showVerticalSliderDialog({
   required BuildContext context,
   required String title,
   required int divisions,
@@ -154,33 +209,67 @@ void showSliderDialog({
   showDialog<void>(
     context: context,
     builder: (context) => AlertDialog(
+      contentPadding: EdgeInsets.zero,
       title: Text(title, textAlign: TextAlign.center),
       content: StreamBuilder<double>(
         stream: stream,
         builder: (context, snapshot) => SizedBox(
           height: 100.0,
-          child: Column(
-            children: [
-              Text('${snapshot.data?.toStringAsFixed(1)}$valueSuffix',
-                  style: const TextStyle(
-                      fontFamily: 'Fixed',
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24.0)),
-              Slider(
-                divisions: divisions,
-                min: min,
-                max: max,
-                value: snapshot.data ?? value,
-                onChanged: onChanged,
-              ),
-            ],
+          child:
+              // Column(
+              //   children: [
+              //     Text('${snapshot.data?.toStringAsFixed(1)}$valueSuffix',
+              //         style: const TextStyle(
+              //             fontFamily: 'Fixed',
+              //             fontWeight: FontWeight.bold,
+              //             fontSize: 24.0)),
+              RotatedBox(
+            quarterTurns: 3,
+            child: Slider(
+              divisions: divisions,
+              min: min,
+              max: max,
+              value: snapshot.data ?? value,
+              onChanged: onChanged,
+            ),
           ),
+          //   ],
+          // ),
         ),
       ),
     ),
   );
 }
 
-
+Widget artworkWidget({required int audioId, required ArtworkType artworkType}) {
+  return QueryArtworkWidget(
+    id: audioId,
+    type: artworkType ,
+    artworkBorder: BorderRadius.circular(10) ,
+    nullArtworkWidget: Image.asset(
+      'assets/images/default_artwork.jpg',
+      fit: BoxFit.fill,
+    ),
+  );
+}
 
 T? ambiguate<T>(T? value) => value;
+
+class SliderCustomTrackShape
+    extends RoundedRectSliderTrackShape {
+  @override
+  Rect getPreferredRect({
+    required RenderBox parentBox,
+    Offset offset = Offset.zero,
+    required SliderThemeData sliderTheme,
+    bool isEnabled = false,
+    bool isDiscrete = false,
+  }) {
+    final double? trackHeight = sliderTheme.trackHeight;
+    final double trackLeft = offset.dx;
+    final double trackTop =
+        offset.dy + (parentBox.size.height - trackHeight!) / 2;
+    final double trackWidth = parentBox.size.width;
+    return Rect.fromLTWH(trackLeft, trackTop, trackWidth, trackHeight);
+  }
+}

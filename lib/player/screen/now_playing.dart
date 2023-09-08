@@ -8,7 +8,7 @@ import 'package:music_app/player/utils/control_button.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../widget/enhancement.dart';
+import '../widget/enhancement_control.dart';
 
 class NowPlaying extends StatefulWidget {
   const NowPlaying(
@@ -22,12 +22,17 @@ class NowPlaying extends StatefulWidget {
 }
 
 class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
-  final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+  // final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
   final _equalizer = AndroidEqualizer();
   final _loudnessEnhancer = AndroidLoudnessEnhancer();
-  late final player = AudioPlayer(
-      audioPipeline:
-          AudioPipeline(androidAudioEffects: [_loudnessEnhancer, _equalizer]));
+  // final _bassBoast = AndroidAudioEffect()
+
+  // late final player = AudioPlayer(
+  //     audioPipeline: AudioPipeline(androidAudioEffects: [
+  //   _loudnessEnhancer,
+  // ]));
+
+  late AudioPlayer player;
 
   @override
   void initState() {
@@ -42,6 +47,12 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
   Future<void> _init() async {
     // Inform the operating system of our app's audio attributes etc.
     // We pick a reasonable default for an app that plays speech.
+
+     player = AudioPlayer(
+      audioPipeline: AudioPipeline(androidAudioEffects: [
+    _loudnessEnhancer,
+  ]));
+
     final session = await AudioSession.instance;
     await session.configure(const AudioSessionConfiguration.speech());
     // Listen to errors during playback.
@@ -54,6 +65,8 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
       // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
       await player.setAudioSource(widget.playlist,
           initialIndex: widget.songIndex);
+
+      player.play();
 
       // AudioSource.
       //   file(widget.song.data));
@@ -143,7 +156,7 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
           final metadata = state!.currentSource!.tag as AudioMetadata;
 
           return Padding(
-            padding: const EdgeInsets.all(15),
+            padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,21 +166,8 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
                     child: AspectRatio(
                       aspectRatio: 1,
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: metadata.artwork ?? Image.asset(
-                          'assets/images/image2.png',
-                          fit: BoxFit.fill,
-                        ),
-
-                        // QueryArtworkWidget(
-                        //   id: widget.song.id,
-                        //   type: ArtworkType.AUDIO,
-                        // ),
-                        // Image.asset(
-                        //   song.artwork,
-                        //   fit: BoxFit.fill,
-                        // ),
-                      ),
+                          borderRadius: BorderRadius.circular(10),
+                          child: metadata.artwork),
                     ),
                   ),
                 ),
@@ -175,8 +175,16 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
                 //const Spacer(),
                 songDetail(metadata),
                 const SizedBox(
-                  height: 20,
+                  height: 10,
                 ),
+                EnhancementControl(
+                  player: player,
+                  equalizer: _equalizer,
+                  loudnessEnhancer: _loudnessEnhancer,
+                ),
+                // const SizedBox(
+                //   height: 20,
+                // ),
                 songProgressBar(player),
                 const SizedBox(
                   height: 20,
@@ -198,7 +206,8 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
           children: [
             Text(
               metadata.title,
-              style: const TextStyle(fontSize: 16, color: Colors.white),
+              style: Theme.of(context).textTheme.bodySmall,
+              // style: const TextStyle(fontSize: 16, color: Colors.white),
             ),
             IconButton(
                 onPressed: () {}, icon: const Icon(Icons.favorite_outline))

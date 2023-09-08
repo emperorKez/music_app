@@ -3,13 +3,17 @@ import 'package:just_audio/just_audio.dart';
 import 'package:music_app/player/utils/equaliser_control.dart';
 import 'package:music_app/player/utils/loudness_enhancer.dart';
 
-class Enhancement extends StatelessWidget {
-  const Enhancement({required this.equalizer, required this.loudnessEnhancer, super.key});
+class EqualizerScreen extends StatelessWidget {
+  const EqualizerScreen({required this.equalizer, required this.loudnessEnhancer, super.key});
   final AndroidEqualizer equalizer;
   final AndroidLoudnessEnhancer loudnessEnhancer;
+  // final AudioPlayer player;
 
   @override
   Widget build(BuildContext context) {
+    
+
+    
     return Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,

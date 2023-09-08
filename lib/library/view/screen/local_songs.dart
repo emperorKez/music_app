@@ -4,6 +4,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:music_app/library/bloc/library_fetch_bloc/library_fetch_bloc.dart';
 import 'package:music_app/player/screen/now_playing.dart';
 import 'package:music_app/app/view/widget/error_snackbar.dart';
+import 'package:music_app/player/utils/common.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class SongListScreen extends StatelessWidget {
@@ -54,20 +55,25 @@ class SongListScreen extends StatelessWidget {
                       leading: AspectRatio(
                         aspectRatio: 1,
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(5),
-                          child: QueryArtworkWidget(
-                            id: state.songs[index].id,
-                            type: ArtworkType.AUDIO,
-                          ),
-                        ),
+                            borderRadius: BorderRadius.circular(5),
+                            child: artworkWidget(
+                                audioId: state.songs[index].id,
+                                artworkType: ArtworkType.AUDIO)),
                       ),
                       title: Text(
                         state.songs[index].title,
-                        style: TextStyle(color: Colors.white),
+                        style: Theme.of(context).textTheme.bodySmall,
+                        //style: const TextStyle(color: Colors.white),
                       ),
-                      subtitle: Text(state.songs[index].artist!),
-                      // trailing: Text('$songDuration'),
-                      trailing: Text('${state.songs[index].duration}'),
+                      subtitle: Text(
+                        state.songs[index].artist!,
+                        softWrap: true,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      trailing: durationWidget(
+                          context: context,
+                          duration: state.songs[index].duration!),
+                      // trailing: Text('${state.songs[index].duration}'),
                     );
                   });
         }
@@ -75,12 +81,23 @@ class SongListScreen extends StatelessWidget {
         //   return Center(child: Text(state.error));
         // }
         else {
-          return Center(child: Text('yoioyoyioio')
+          return const Center(child: Text('yoioyoyioio')
               // CircularProgressIndicator(),
               );
         }
       },
     );
+  }
+
+  Widget durationWidget(
+      {required BuildContext context, required int duration}) {
+    final Duration songDuration = Duration(milliseconds: duration);
+    return Text(
+        RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$')
+                .firstMatch("$songDuration")
+                ?.group(1) ??
+            '$songDuration',
+        style: Theme.of(context).textTheme.bodySmall);
   }
 
   defaultPlaylist(List<SongModel> songList) {
@@ -92,14 +109,9 @@ class SongListScreen extends StatelessWidget {
                   album: songList[index].album!,
                   artist: songList[index].artist!,
                   title: songList[index].title,
-                  artwork: QueryArtworkWidget(
-                    id: songList[index].id,
-                    type: ArtworkType.AUDIO,
-                    nullArtworkWidget: Image.asset(
-                      'assets/images/image2.png',
-                      fit: BoxFit.fill,
-                    ),
-                  ),
+                  artwork: artworkWidget(
+                      audioId: songList[index].id,
+                      artworkType: ArtworkType.AUDIO),
                 ))));
   }
 
