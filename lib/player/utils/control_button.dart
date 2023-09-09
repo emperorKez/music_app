@@ -70,12 +70,19 @@ class _ControlButtonsState extends State<ControlButtons> {
 
               if (processingState == ProcessingState.loading ||
                   processingState == ProcessingState.buffering) {
-                return Container(
-                  margin: const EdgeInsets.all(8.0),
-                  width: 32.0,
-                  height: 32.0,
-                  child: const CircularProgressIndicator(),
-                );
+                return IconButton(
+                    iconSize: 48.0,
+                    onPressed: (){},
+                    icon: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: const BoxDecoration(
+                            shape: BoxShape.circle, color: Colors.green),
+                        child: const Icon(
+                          Icons.play_arrow,
+                          size: 32,
+                          color: Colors.white,
+                        )
+                        ));
               } else if (playing != true) {
                 return IconButton(
                     iconSize: 48.0,

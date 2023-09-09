@@ -1,14 +1,16 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:music_app/player/screen/now_playing.dart';
 import 'package:music_app/app/view/widget/data.dart';
 
 
 class PlaylistScreen extends StatelessWidget {
   const PlaylistScreen(
-      {required this.playlistTitle, this.playlistArtwork, super.key});
+      {required this.playlistTitle, this.playlistArtwork,required this.player, super.key});
   final String? playlistArtwork;
   final String playlistTitle;
+  final AudioPlayer player;
 
   @override
   Widget build(BuildContext context) {

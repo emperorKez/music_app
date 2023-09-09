@@ -51,7 +51,10 @@ dependencies:
   upgrader:
   introduction_screen:
   shared_preferences:
+  provider: 
   # awesome_notifications:
+
+  animated_text_kit:
 
 
   # The following adds the Cupertino Icons font to your application.

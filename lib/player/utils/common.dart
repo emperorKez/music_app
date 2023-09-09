@@ -32,10 +32,9 @@ class SeekBarState extends State<SeekBar> {
     super.didChangeDependencies();
 
     _sliderThemeData = SliderTheme.of(context).copyWith(
-      trackHeight: 4.0,
-                  thumbShape: SliderComponentShape.noThumb,
-                trackShape: SliderCustomTrackShape()
-    );
+        trackHeight: 4.0,
+        thumbShape: SliderComponentShape.noThumb,
+        trackShape: SliderCustomTrackShape());
   }
 
   @override
@@ -196,8 +195,9 @@ class PositionData {
 
 void showVerticalSliderDialog({
   required BuildContext context,
-  required String title,
-  required int divisions,
+  // required String title,
+  required Side side,
+  int? divisions,
   required double min,
   required double max,
   String valueSuffix = '',
@@ -206,31 +206,43 @@ void showVerticalSliderDialog({
   required Stream<double> stream,
   required ValueChanged<double> onChanged,
 }) {
+  final deviceWidth = MediaQuery.of(context).size.width;
   showDialog<void>(
     context: context,
     builder: (context) => AlertDialog(
+      backgroundColor: Colors.transparent,
       contentPadding: EdgeInsets.zero,
-      title: Text(title, textAlign: TextAlign.center),
+      insetPadding: side == Side.left
+          ? EdgeInsets.only(
+              left: 30,
+              right: deviceWidth - 40,
+            )
+          : EdgeInsets.only(left: deviceWidth - 40, right: 30),
+      // title: Text(title, textAlign: TextAlign.center),
       content: StreamBuilder<double>(
         stream: stream,
         builder: (context, snapshot) => SizedBox(
-          height: 100.0,
-          child:
-              // Column(
-              //   children: [
-              //     Text('${snapshot.data?.toStringAsFixed(1)}$valueSuffix',
-              //         style: const TextStyle(
-              //             fontFamily: 'Fixed',
-              //             fontWeight: FontWeight.bold,
-              //             fontSize: 24.0)),
-              RotatedBox(
+          height: 200.0,
+          child: RotatedBox(
             quarterTurns: 3,
-            child: Slider(
-              divisions: divisions,
-              min: min,
-              max: max,
-              value: snapshot.data ?? value,
-              onChanged: onChanged,
+            child: SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                // activeTrackColor: Colors.blue,
+                // inactiveTrackColor: Colors.blue,
+                // trackShape: RectangularSliderTrackShape(),
+                trackHeight: 8.0,
+                // thumbColor: Color.fromARGB(255, 204, 164, 35),
+                // thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
+                // overlayColor: Colors.red.withAlpha(32),
+                // overlayShape: RoundSliderOverlayShape(overlayRadius: 25.0),
+              ),
+              child: Slider(
+                divisions: divisions,
+                min: min,
+                max: max,
+                value: snapshot.data ?? value,
+                onChanged: onChanged,
+              ),
             ),
           ),
           //   ],
@@ -244,8 +256,8 @@ void showVerticalSliderDialog({
 Widget artworkWidget({required int audioId, required ArtworkType artworkType}) {
   return QueryArtworkWidget(
     id: audioId,
-    type: artworkType ,
-    artworkBorder: BorderRadius.circular(10) ,
+    type: artworkType,
+    artworkBorder: BorderRadius.circular(10),
     nullArtworkWidget: Image.asset(
       'assets/images/default_artwork.jpg',
       fit: BoxFit.fill,
@@ -255,8 +267,7 @@ Widget artworkWidget({required int audioId, required ArtworkType artworkType}) {
 
 T? ambiguate<T>(T? value) => value;
 
-class SliderCustomTrackShape
-    extends RoundedRectSliderTrackShape {
+class SliderCustomTrackShape extends RoundedRectSliderTrackShape {
   @override
   Rect getPreferredRect({
     required RenderBox parentBox,
@@ -273,3 +284,5 @@ class SliderCustomTrackShape
     return Rect.fromLTWH(trackLeft, trackTop, trackWidth, trackHeight);
   }
 }
+
+enum Side { left, right }

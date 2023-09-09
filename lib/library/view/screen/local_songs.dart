@@ -1,17 +1,31 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:music_app/library/bloc/library_fetch_bloc/library_fetch_bloc.dart';
-import 'package:music_app/player/screen/now_playing.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:music_app/app/view/widget/error_snackbar.dart';
+import 'package:music_app/library/bloc/library_fetch_bloc/library_fetch_bloc.dart';
+import 'package:music_app/library/repository/services.dart';
+import 'package:music_app/player/bloc/player_bloc/player_bloc.dart';
+import 'package:music_app/player/screen/now_playing.dart';
 import 'package:music_app/player/utils/common.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
+import '../../../app/app.dart';
+
 class SongListScreen extends StatelessWidget {
-  const SongListScreen({super.key});
+  SongListScreen({
+    Key? key,
+    //  required this.playerInstance,
+  }) : super(key: key);
+
+  // final AudioPlayer playerInstance ;
+  late AudioPlayer player;
 
   @override
   Widget build(BuildContext context) {
+    player = context.read<PlayerBloc>().state.player!;
+
     return SafeArea(
         child: Scaffold(
       appBar: AppBar(
@@ -48,7 +62,7 @@ class SongListScreen extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (context) => NowPlaying(
-                                    song: state.songs[index],
+                                    player: player,
                                     playlist: defaultPlaylist(state.songs),
                                     songIndex: index,
                                   ))),
@@ -62,12 +76,15 @@ class SongListScreen extends StatelessWidget {
                       ),
                       title: Text(
                         state.songs[index].title,
+                        softWrap: true,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodySmall,
                         //style: const TextStyle(color: Colors.white),
                       ),
                       subtitle: Text(
                         state.songs[index].artist!,
-                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       trailing: durationWidget(
@@ -105,13 +122,15 @@ class SongListScreen extends StatelessWidget {
         children: List.generate(
             songList.length,
             (index) => AudioSource.file(songList[index].data,
-                tag: AudioMetadata(
+                tag: MediaItem(
+                  id: '${songList[index].id}',
                   album: songList[index].album!,
                   artist: songList[index].artist!,
                   title: songList[index].title,
-                  artwork: artworkWidget(
-                      audioId: songList[index].id,
-                      artworkType: ArtworkType.AUDIO),
+                  //artUri: Uri.parse(String.fromCharCodes(LibraryRepository().fetchArtwork()))
+                  // artwork: artworkWidget(
+                  //     audioId: songList[index].id,
+                  //     artworkType: ArtworkType.AUDIO),
                 ))));
   }
 
@@ -129,16 +148,16 @@ class SongListScreen extends StatelessWidget {
   // }
 }
 
-class AudioMetadata {
-  final String title;
-  final String? album;
-  final String artist;
-  final Widget? artwork;
+// class AudioMetadata {
+//   final String title;
+//   final String? album;
+//   final String artist;
+//   final Widget? artwork;
 
-  AudioMetadata({
-    required this.title,
-    required this.artist,
-    this.album,
-    this.artwork,
-  });
-}
+//   AudioMetadata({
+//     required this.title,
+//     required this.artist,
+//     this.album,
+//     this.artwork,
+//   });
+// }

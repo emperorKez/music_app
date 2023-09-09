@@ -1,21 +1,29 @@
+import 'dart:convert';
+
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:music_app/library/view/screen/local_songs.dart';
 import 'package:music_app/player/utils/common.dart';
 import 'package:music_app/player/utils/control_button.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../../library/repository/services.dart';
 import '../widget/enhancement_control.dart';
 
 class NowPlaying extends StatefulWidget {
   const NowPlaying(
-      {required this.song, required this.playlist, this.songIndex, super.key});
-  final SongModel song;
+      {required this.player,
+      required this.playlist,
+      this.songIndex,
+      super.key});
   final ConcatenatingAudioSource playlist;
   final int? songIndex;
+  final AudioPlayer player;
 
   @override
   State<NowPlaying> createState() => _NowPlayingState();
@@ -23,8 +31,10 @@ class NowPlaying extends StatefulWidget {
 
 class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
   // final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
-  final _equalizer = AndroidEqualizer();
-  final _loudnessEnhancer = AndroidLoudnessEnhancer();
+  // final _equalizer = AndroidEqualizer();
+
+  // final _loudnessEnhancer = AndroidLoudnessEnhancer();
+
   // final _bassBoast = AndroidAudioEffect()
 
   // late final player = AudioPlayer(
@@ -32,7 +42,7 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
   //   _loudnessEnhancer,
   // ]));
 
-  late AudioPlayer player;
+  // late AudioPlayer player;
 
   @override
   void initState() {
@@ -48,25 +58,36 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
     // Inform the operating system of our app's audio attributes etc.
     // We pick a reasonable default for an app that plays speech.
 
-     player = AudioPlayer(
-      audioPipeline: AudioPipeline(androidAudioEffects: [
-    _loudnessEnhancer,
-  ]));
+    //    player = AudioPlayer(
+    //     audioPipeline: AudioPipeline(androidAudioEffects: [
+    //   _loudnessEnhancer,
+    // ]));
 
     final session = await AudioSession.instance;
-    await session.configure(const AudioSessionConfiguration.speech());
+    await session.configure(const AudioSessionConfiguration.music());
+    // await session.configure(const AudioSessionConfiguration(
+    //   avAudioSessionCategory: AVAudioSessionCategory.playback,
+    //       avAudioSessionMode: AVAudioSessionMode.defaultMode,
+    //       androidAudioAttributes: const AndroidAudioAttributes(
+    //         contentType: AndroidAudioContentType.music,
+    //         usage: AndroidAudioUsage.media,
+    //       ),
+    //       androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
+    //       androidWillPauseWhenDucked: false
+    // ));
+
     // Listen to errors during playback.
-    player.playbackEventStream.listen((event) {},
+    widget.player.playbackEventStream.listen((event) {},
         onError: (Object e, StackTrace stackTrace) {
       print('A stream error occurred: $e');
     });
     // Try to load audio from a source and catch any errors.
     try {
       // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
-      await player.setAudioSource(widget.playlist,
-          initialIndex: widget.songIndex);
+      await widget.player
+          .setAudioSource(widget.playlist, initialIndex: widget.songIndex);
 
-      player.play();
+      widget.player.play();
 
       // AudioSource.
       //   file(widget.song.data));
@@ -89,32 +110,32 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
     // });
   }
 
-  @override
-  void dispose() {
-    ambiguate(WidgetsBinding.instance)!.removeObserver(this);
-    // Release decoders and buffers back to the operating system making them
-    // available for other apps to use.
-    player.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   ambiguate(WidgetsBinding.instance)!.removeObserver(this);
+  //   // Release decoders and buffers back to the operating system making them
+  //   // available for other apps to use.
+  //   widget.player.dispose();
+  //   super.dispose();
+  // }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      // Release the player's resources when not in use. We use "stop" so that
-      // if the app resumes later, it will still remember what position to
-      // resume from.
-      player.stop();
-    }
-  }
+  // @override
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   if (state == AppLifecycleState.paused) {
+  //     // Release the player's resources when not in use. We use "stop" so that
+  //     // if the app resumes later, it will still remember what position to
+  //     // resume from.
+  //     widget.player.stop();
+  //   }
+  // }
 
   /// Collects the data useful for displaying in a seek bar, using a handy
   /// feature of rx_dart to combine the 3 streams of interest into one.
   Stream<PositionData> get positionDataStream =>
       Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
-          player.positionStream,
-          player.bufferedPositionStream,
-          player.durationStream,
+          widget.player.positionStream,
+          widget.player.bufferedPositionStream,
+          widget.player.durationStream,
           (position, bufferedPosition, duration) => PositionData(
               position, bufferedPosition, duration ?? Duration.zero));
 
@@ -135,7 +156,12 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
                   )),
               actions: [
                 IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SongListScreen()));
+                    },
                     icon: const Icon(
                       Icons.more_horiz,
                       color: Colors.white,
@@ -147,13 +173,13 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
 
   Widget body() {
     return StreamBuilder<SequenceState?>(
-        stream: player.sequenceStateStream,
+        stream: widget.player.sequenceStateStream,
         builder: (context, snapshot) {
           final state = snapshot.data;
           if (state?.sequence.isEmpty ?? true) {
             return const SizedBox();
           }
-          final metadata = state!.currentSource!.tag as AudioMetadata;
+          final metadata = state!.currentSource!.tag as MediaItem;
 
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -167,7 +193,9 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
                       aspectRatio: 1,
                       child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
-                          child: metadata.artwork),
+                          child: artworkWidget(
+                              audioId: int.parse(metadata.id),
+                              artworkType: ArtworkType.AUDIO)),
                     ),
                   ),
                 ),
@@ -178,42 +206,38 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
                   height: 10,
                 ),
                 EnhancementControl(
-                  player: player,
-                  equalizer: _equalizer,
-                  loudnessEnhancer: _loudnessEnhancer,
+                  player: widget.player,
                 ),
-                // const SizedBox(
-                //   height: 20,
-                // ),
-                songProgressBar(player),
+                songProgressBar(widget.player),
                 const SizedBox(
                   height: 20,
                 ),
-                ControlButtons(player: player)
+                ControlButtons(player: widget.player)
               ],
             ),
           );
         });
   }
 
-  Widget songDetail(AudioMetadata metadata) {
+  Widget songDetail(MediaItem metadata) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              metadata.title,
-              style: Theme.of(context).textTheme.bodySmall,
-              // style: const TextStyle(fontSize: 16, color: Colors.white),
-            ),
-            IconButton(
-                onPressed: () {}, icon: const Icon(Icons.favorite_outline))
-          ],
-        ),
-        Text(metadata.artist)
+        AnimatedTextKit(
+            repeatForever: true,
+            pause: Duration.zero,
+            animatedTexts: [
+              TyperAnimatedText(
+                metadata.title,
+                speed: const Duration(milliseconds: 250),
+                curve: Curves.linear,
+                textStyle: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ]),
+        Text(metadata.artist!,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodySmall)
       ],
     );
   }

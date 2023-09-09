@@ -4,23 +4,25 @@ import 'package:just_audio/just_audio.dart';
 import 'package:music_app/player/screen/equalizer_screen.dart';
 import 'package:music_app/player/utils/common.dart';
 
+
+
 class EnhancementControl extends StatelessWidget {
   const EnhancementControl({
     Key? key,
     required this.player,
-    required this.equalizer,
-    required this.loudnessEnhancer,
+    // required this.equalizer,
+    // required this.loudnessEnhancer,
   }) : super(key: key);
   final AudioPlayer player;
-  final AndroidEqualizer equalizer;
-  final AndroidLoudnessEnhancer loudnessEnhancer;
+  // final AndroidEqualizer equalizer;
+  // final AndroidLoudnessEnhancer loudnessEnhancer;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         _volumeSlider(context: context),
-       _equalizer(context),
+        _equalizer(context),
         const Spacer(),
         _addToPlaylist(),
         _speedSlider()
@@ -34,13 +36,14 @@ class EnhancementControl extends StatelessWidget {
       onPressed: () {
         showVerticalSliderDialog(
           context: context,
-          title: "Adjust volume",
-          divisions: 100,
+          // title: "Adjust volume",
+          // divisions: 9,
           min: 0.0,
-          max: 100.0,
+          max: 1.0,
           value: player.volume,
           stream: player.volumeStream,
           onChanged: player.setVolume,
+          side: Side.left
         );
       },
       icon: const Icon(Icons.volume_up),
@@ -52,18 +55,19 @@ class EnhancementControl extends StatelessWidget {
     return StreamBuilder<double>(
       stream: player.speedStream,
       builder: (context, snapshot) => IconButton(
-        icon: Text("${snapshot.data?.toStringAsFixed(1)}x",
+        icon: Text("${snapshot.data?.toStringAsFixed(2)}x",
             style: const TextStyle(fontWeight: FontWeight.bold)),
         onPressed: () {
           showVerticalSliderDialog(
             context: context,
-            title: "Adjust speed",
-            divisions: 6,
+            // title: "Adjust speed",
+            divisions: 7,
             min: 0.25,
             max: 2,
             value: player.speed,
             stream: player.speedStream,
             onChanged: player.setSpeed,
+            side: Side.right
           );
         },
       ),
@@ -75,8 +79,8 @@ class EnhancementControl extends StatelessWidget {
         onPressed: () => showModalBottomSheet<void>(
             context: context,
             builder: (context) => EqualizerScreen(
-                  equalizer: equalizer,
-                  loudnessEnhancer: loudnessEnhancer,
+                // equalizer: AppState().equalizer,
+                // loudnessEnhancer: AppState().loudnessEnhancer,
                 )),
         icon: const Icon(Icons.equalizer));
   }

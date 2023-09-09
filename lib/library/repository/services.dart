@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
@@ -47,5 +48,14 @@ class LibraryRepository {
     List<ArtistModel> artists = await audioQuery.queryArtists();
     return artists;
 
+  }
+
+
+   Future<Uint8List?> fetchArtwork(int audioId) async {
+    // DEFAULT: ArtworkFormat.JPEG, 200 and false
+    return await audioQuery.queryArtwork(
+        audioId,
+        ArtworkType.AUDIO,
+      );
   }
 }
