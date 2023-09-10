@@ -1,14 +1,9 @@
 import 'package:flutter/services.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class LibraryRepository {
   final OnAudioQuery audioQuery = OnAudioQuery();
 
-  getLocalSongs() async {
-    final audioSource = AudioSource ;
-
-  }
 
   checkAndRequestPermissions({bool retry = false}) async {
     // The param 'retryRequest' is false, by default.
@@ -43,12 +38,34 @@ class LibraryRepository {
     return genres;
 
   }
+
   fetchArtists() async {
     // Query Albums
     List<ArtistModel> artists = await audioQuery.queryArtists();
     return artists;
 
   }
+
+  fetchPlaylists() async {
+    // Query Albums
+    List<PlaylistModel> playlists = await audioQuery.queryPlaylists();
+    return playlists;
+
+  }
+
+  createPlaylist({required String name}) async {
+    await audioQuery.createPlaylist(name);
+  }
+
+
+
+
+//   createPlaylist	(PlaylistName, RequestPermission)	bool
+// removePlaylist	(PlaylistId, RequestPermission)	bool
+// addToPlaylist	[NT-BG](PlaylistId, AudioId, RequestPermission)	bool
+// removeFromPlaylist	[NT](PlaylistId, AudioId, RequestPermission)	bool
+// renamePlaylist	(PlaylistId, NewName, RequestPermission)	bool
+// moveItemTo
 
 
    Future<Uint8List?> fetchArtwork(int audioId) async {

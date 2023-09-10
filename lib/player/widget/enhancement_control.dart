@@ -78,7 +78,7 @@ class EnhancementControl extends StatelessWidget {
     return IconButton(
         onPressed: () => showModalBottomSheet<void>(
             context: context,
-            builder: (context) => EqualizerScreen(
+            builder: (context) => const EqualizerScreen(
                 // equalizer: AppState().equalizer,
                 // loudnessEnhancer: AppState().loudnessEnhancer,
                 )),

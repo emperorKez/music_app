@@ -24,11 +24,13 @@ class LibraryLoaded extends LibraryState {
   final List<AlbumModel> albums;
   final List<GenreModel> genres;
   final List<ArtistModel> artists;
+  final List<PlaylistModel>? playlists;
  LibraryLoaded({
     required this.songs,
     required this.albums,
     required this.genres,
-    required this.artists
+    required this.artists,
+    this.playlists
   });
   // const LibraryLoaded({required super.songs, required super.albums});
 }

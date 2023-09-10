@@ -112,6 +112,6 @@ class AppState extends State<App> with WidgetsBindingObserver {
 
     @override
   Widget build(BuildContext context) {
-    return  HomeScreen();
+    return  const HomeScreen();
   }
 }

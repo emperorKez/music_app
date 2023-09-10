@@ -55,6 +55,8 @@ dependencies:
   # awesome_notifications:
 
   animated_text_kit:
+  url_launcher:
+  equatable: 
 
 
   # The following adds the Cupertino Icons font to your application.

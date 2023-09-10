@@ -1,6 +1,37 @@
 part of 'app_bloc.dart';
 
 @immutable
-class AppState {}
+class AppState {
+  // final Map<String, String>? loginData;
+  final PackageInfo? packageInfo;
+  final bool darkMode;
+  final bool notification;
+  const AppState({this.packageInfo, this.darkMode = false, this.notification = true});
 
-class AppInitial extends AppState {}
+  AppState copyWith({
+    Map<String, String>? loginPrefData,
+  PackageInfo? packageInfo,
+  bool isFirstRun = true,
+  }){
+    return AppState(
+      // loginData: loginPrefData ?? this.loginData,
+      packageInfo: packageInfo ?? this.packageInfo,
+      // darkMode: darkMode ?? this.darkMode
+
+
+    );
+  }
+}
+
+class AppSettingsInitial extends AppState {}
+
+class AppSettingsLoading extends AppState {}
+
+class AppSettingsLoaded extends AppState {
+  const AppSettingsLoaded({required super.packageInfo, required super.darkMode});
+}
+
+class AppSettingsError extends AppState {
+  final String error;
+  const AppSettingsError({this.error = 'Something went wrong'}); 
+}

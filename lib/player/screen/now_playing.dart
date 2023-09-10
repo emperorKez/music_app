@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:audio_session/audio_session.dart';
@@ -6,30 +5,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:music_app/library/view/screen/local_songs.dart';
 import 'package:music_app/player/utils/common.dart';
 import 'package:music_app/player/utils/control_button.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../../library/repository/services.dart';
+
 import '../widget/enhancement_control.dart';
 
-class NowPlaying extends StatefulWidget {
-  const NowPlaying(
+class NowPlayingScreen extends StatefulWidget {
+  const NowPlayingScreen(
       {required this.player,
-      required this.playlist,
+      this.playlist,
       this.songIndex,
       super.key});
-  final ConcatenatingAudioSource playlist;
+  final ConcatenatingAudioSource? playlist;
   final int? songIndex;
   final AudioPlayer player;
 
   @override
-  State<NowPlaying> createState() => _NowPlayingState();
+  State<NowPlayingScreen> createState() => _NowPlayingScreenState();
 }
 
-class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
+class _NowPlayingScreenState extends State<NowPlayingScreen> with WidgetsBindingObserver {
+  
   // final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
   // final _equalizer = AndroidEqualizer();
 
@@ -79,13 +78,14 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
     // Listen to errors during playback.
     widget.player.playbackEventStream.listen((event) {},
         onError: (Object e, StackTrace stackTrace) {
-      print('A stream error occurred: $e');
     });
     // Try to load audio from a source and catch any errors.
     try {
       // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
+      
       await widget.player
-          .setAudioSource(widget.playlist, initialIndex: widget.songIndex);
+          .setAudioSource(widget.playlist ?? AudioSource.asset('assets/songs/default.mp3'), 
+          initialIndex: widget.songIndex);
 
       widget.player.play();
 
@@ -93,8 +93,7 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
       //   file(widget.song.data));
       // uri(Uri.parse(
       //     "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3")));
-    } catch (e) {
-      print("Error loading audio source: $e");
+    } catch (_) {
     }
 
     // Show a snackbar whenever reaching the end of an item in the playlist.
@@ -154,19 +153,19 @@ class _NowPlayingState extends State<NowPlaying> with WidgetsBindingObserver {
                     Icons.arrow_back_ios_new,
                     color: Colors.white,
                   )),
-              actions: [
-                IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SongListScreen()));
-                    },
-                    icon: const Icon(
-                      Icons.more_horiz,
-                      color: Colors.white,
-                    ))
-              ],
+              // actions: [
+              //   IconButton(
+              //       onPressed: () {
+              //         Navigator.push(
+              //             context,
+              //             MaterialPageRoute(
+              //                 builder: (context) => SongListScreen()));
+              //       },
+              //       icon: const Icon(
+              //         Icons.more_horiz,
+              //         color: Colors.white,
+              //       ))
+              // ],
             ),
             body: body()));
   }

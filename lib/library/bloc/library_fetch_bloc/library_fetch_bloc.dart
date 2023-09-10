@@ -23,14 +23,13 @@ final LibraryRepository appRepo;
       final albumData = await appRepo.fetchAlbums();
       final genreData = await appRepo.fetchGenres();
       final artistData = await appRepo.fetchArtists();
+      final playlistData = await appRepo.fetchPlaylists();
       
       emit(LibraryLoaded(songs: songData, albums: albumData, artists: artistData, genres: genreData));
     } catch (e) {
       emit(LibraryError(error: e.toString()));
       
     }
-    } else {
-      print('%%%%%% No Permission  $hasPermission');
     }
   }
 }

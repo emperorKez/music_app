@@ -10,8 +10,8 @@ class AppDrawer extends StatelessWidget {
     return SafeArea(child: Drawer(
       child: ListView(
         shrinkWrap: true, 
-        children: [
-          ListTile(
+        children: const [
+           ListTile(
             leading: Icon(Icons.settings), 
             title: Text('Settings'), 
             trailing: Icon(Icons.arrow_forward_ios),
