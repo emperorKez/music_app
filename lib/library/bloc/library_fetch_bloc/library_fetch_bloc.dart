@@ -19,13 +19,37 @@ final LibraryRepository appRepo;
     bool hasPermission = await appRepo.checkAndRequestPermissions();
     if (hasPermission){
     try {
-      final songData = await appRepo.fetchSonges();
+      final List<SongModel> songData = await appRepo.fetchSonges();
+      // final defaultSongList = songData;
       final albumData = await appRepo.fetchAlbums();
       final genreData = await appRepo.fetchGenres();
       final artistData = await appRepo.fetchArtists();
       final playlistData = await appRepo.fetchPlaylists();
+
+      // int indexOfFavoritePlaylist = playlistData.indexWhere((e) => e.playlist == 'favorite');
+      // if (indexOfFavoritePlaylist < 0){
+      //   await appRepo.createPlaylist(name: 'favorite');
+      //   final playlistData = await appRepo.fetchPlaylists();
+      // }
+
+      // for (var e in playlistData){
+      //   if (e.playlist == 'favorite'){}
+      // }
+
+      // for (var element in playlistData){
+      //   if (element.playlist == 'Recently Added'){
+      //     await appRepo.removePlaylist(playlistId: element.id);
+      //   }
+      // }
+      // await appRepo.createPlaylist(name: 'Recently Added');
+      // songData.sort((a, b) => a.dateAdded!.compareTo(b.dateAdded!)) ;
+      // for (int i = 0; i <= 10; i++){
+      //   await appRepo.addToPlaylist(playlistId: playlistData[playlistData.indexWhere((e) => e.playlist == 'Recently Added')].id, audioId: songData[1].id);
+      // }
+
+
       
-      emit(LibraryLoaded(songs: songData, albums: albumData, artists: artistData, genres: genreData));
+      emit(LibraryLoaded(songs: songData, albums: albumData, artists: artistData, genres: genreData, playlists: playlistData));
     } catch (e) {
       emit(LibraryError(error: e.toString()));
       

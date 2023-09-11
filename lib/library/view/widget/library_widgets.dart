@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:music_app/library/repository/services.dart';
 import 'package:music_app/player/screen/now_playing.dart';
 import 'package:music_app/player/utils/common.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -19,16 +20,25 @@ Widget durationWidget({required BuildContext context, required int duration}) {
 }
 
 createPlaylist(List<SongModel> songList) {
+  List<String> uriList = [];
+  // for (var e in songList) {
+  //   uriList.add(await LibraryRepository().fetchArtwork(e.id) );
+    
+    
+  // }
+  // print(uriList);
+
   return ConcatenatingAudioSource(
-      children: List.generate(
-          songList.length,
-          (index) => AudioSource.file(songList[index].data,
-              tag: MediaItem(
-                id: '${songList[index].id}',
-                album: songList[index].album!,
-                artist: songList[index].artist!,
-                title: songList[index].title,
-              ))));
+      children: List.generate(songList.length, (index)  {
+    return AudioSource.file(songList[index].data,
+        tag: MediaItem(
+            id: '${songList[index].id}',
+            album: songList[index].album!,
+            artist: songList[index].artist!,
+            title: songList[index].title,
+            // artUri: Uri.file(uriList[index])
+            ));
+  }));
 }
 
 Widget gridViewWidget(List<SongModel> songList) {
@@ -98,14 +108,16 @@ Widget listViewWidget(List<SongModel> songList) {
       itemCount: songList.length,
       itemBuilder: (context, index) {
         return ListTile(
-          onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => NowPlayingScreen(
-                        player: context.read<PlayerBloc>().state.player!,
-                        playlist: createPlaylist(songList),
-                        songIndex: index,
-                      ))),
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => NowPlayingScreen(
+                          player: context.read<PlayerBloc>().state.player!,
+                          playlist: createPlaylist(songList),
+                          songIndex: index,
+                        )));
+          },
           leading: AspectRatio(
             aspectRatio: 1,
             child: ClipRRect(

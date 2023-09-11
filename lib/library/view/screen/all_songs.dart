@@ -11,10 +11,14 @@ import 'package:music_app/library/view/widget/search_form.dart';
 import 'package:music_app/player/bloc/player_bloc/player_bloc.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
+enum SortSong { dateAdded, title }
+
 class AllSongsScreen extends StatefulWidget {
   const AllSongsScreen({
     Key? key,
+    this.sortBy = SortSong.title,
   }) : super(key: key);
+  final SortSong sortBy;
 
   @override
   State<AllSongsScreen> createState() => _AllSongsScreenState();
@@ -67,16 +71,18 @@ class _AllSongsScreenState extends State<AllSongsScreen> {
             child: CircularProgressIndicator(),
           );
         } else if (state is LibraryLoaded) {
+          final List<SongModel> songList = state.songs;
+          if (widget.sortBy == SortSong.dateAdded) {
+            state.songs.sort((a, b) => b.dateAdded!.compareTo(a.dateAdded!));
+          } else {
+            state.songs.sort((a, b) => a.title.compareTo(b.title));
+          }
           return state.songs.isEmpty
               ? const Center(
                   child: Text('you do not have any song on your device'),
                 )
-              : songView(songList: state.songs);
-        }
-        // else if (state is LibraryError) {
-        //   return Center(child: Text(state.error));
-        // }
-        else {
+              : songView(songList: songList);
+        } else {
           return const Center(
             child: CircularProgressIndicator(),
           );

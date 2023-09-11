@@ -57,6 +57,9 @@ dependencies:
   animated_text_kit:
   url_launcher:
   equatable: 
+  #content_resolver:
+  sqflite:
+  path:
 
 
   # The following adds the Cupertino Icons font to your application.

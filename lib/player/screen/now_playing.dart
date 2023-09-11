@@ -1,24 +1,21 @@
-
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:music_app/library/repository/database.dart';
+// import 'package:music_app/main.dart';
 import 'package:music_app/player/utils/common.dart';
 import 'package:music_app/player/utils/control_button.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:rxdart/rxdart.dart';
 
-
 import '../widget/enhancement_control.dart';
 
 class NowPlayingScreen extends StatefulWidget {
   const NowPlayingScreen(
-      {required this.player,
-      this.playlist,
-      this.songIndex,
-      super.key});
+      {required this.player, this.playlist, this.songIndex, super.key});
   final ConcatenatingAudioSource? playlist;
   final int? songIndex;
   final AudioPlayer player;
@@ -27,8 +24,8 @@ class NowPlayingScreen extends StatefulWidget {
   State<NowPlayingScreen> createState() => _NowPlayingScreenState();
 }
 
-class _NowPlayingScreenState extends State<NowPlayingScreen> with WidgetsBindingObserver {
-  
+class _NowPlayingScreenState extends State<NowPlayingScreen>
+    with WidgetsBindingObserver {
   // final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
   // final _equalizer = AndroidEqualizer();
 
@@ -62,8 +59,9 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> with WidgetsBinding
     //   _loudnessEnhancer,
     // ]));
 
-    final session = await AudioSession.instance;
-    await session.configure(const AudioSessionConfiguration.music());
+    // final session = await AudioSession.instance;
+    // await session.configure(const AudioSessionConfiguration.music());
+
     // await session.configure(const AudioSessionConfiguration(
     //   avAudioSessionCategory: AVAudioSessionCategory.playback,
     //       avAudioSessionMode: AVAudioSessionMode.defaultMode,
@@ -76,25 +74,31 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> with WidgetsBinding
     // ));
 
     // Listen to errors during playback.
-    widget.player.playbackEventStream.listen((event) {},
-        onError: (Object e, StackTrace stackTrace) {
-    });
+    widget.player.playbackEventStream
+        .listen((event) {}, onError: (Object e, StackTrace stackTrace) {});
     // Try to load audio from a source and catch any errors.
     try {
       // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
-      
-      await widget.player
-          .setAudioSource(widget.playlist ?? AudioSource.asset('assets/songs/default.mp3'), 
+
+      await widget.player.setAudioSource(
+          widget.playlist ?? AudioSource.asset('assets/songs/default.mp3'),
           initialIndex: widget.songIndex);
 
       widget.player.play();
+
+      // await player.setAudioSource(
+      //     widget.playlist ?? AudioSource.asset('assets/songs/default.mp3'),
+      //     initialIndex: widget.songIndex);
+
+      // player.play();
+
+      // await audioHandler.addQueueItems(widget.playlist)
 
       // AudioSource.
       //   file(widget.song.data));
       // uri(Uri.parse(
       //     "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3")));
-    } catch (_) {
-    }
+    } catch (_) {}
 
     // Show a snackbar whenever reaching the end of an item in the playlist.
     // player.positionDiscontinuityStream.listen((discontinuity) {
@@ -179,6 +183,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> with WidgetsBinding
             return const SizedBox();
           }
           final metadata = state!.currentSource!.tag as MediaItem;
+          DatabaseProvider().updatePlayedCount(songId: int.parse(metadata.id));
 
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -187,16 +192,16 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> with WidgetsBinding
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: Center(
-                    child: AspectRatio(
-                      aspectRatio: 1,
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: artworkWidget(
-                              audioId: int.parse(metadata.id),
-                              artworkType: ArtworkType.AUDIO)),
-                    ),
-                  ),
+                  child: Center(child: Text(metadata.id)
+                      // AspectRatio(
+                      //   aspectRatio: 1,
+                      //   child: ClipRRect(
+                      //       borderRadius: BorderRadius.circular(10),
+                      //       child: artworkWidget(
+                      //           audioId: int.parse(metadata.id),
+                      //           artworkType: ArtworkType.AUDIO)),
+                      // ),
+                      ),
                 ),
 
                 //const Spacer(),
@@ -305,9 +310,6 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> with WidgetsBinding
   //   ));
   // }
 }
-
-
-
 
 // class AudioMetadata {
 //   final String album;

@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:music_app/app/view/screen/all_playlist.dart';
+import 'package:music_app/app/view/screen/playlist_songs.dart';
 import 'package:music_app/app/view/widget/error_snackbar.dart';
+import 'package:music_app/app/view/widget/most_played.dart';
 import 'package:music_app/library/bloc/library_fetch_bloc/library_fetch_bloc.dart';
 import 'package:music_app/library/view/screen/all_artist_screen.dart';
 import 'package:music_app/library/view/screen/genre_screen.dart';
 import 'package:music_app/library/view/screen/all_songs.dart';
+import 'package:music_app/library/view/widget/library_widgets.dart';
+import 'package:music_app/player/bloc/player_bloc/player_bloc.dart';
+import 'package:music_app/player/screen/now_playing.dart';
 import 'package:music_app/player/utils/common.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
@@ -22,8 +27,8 @@ topContainer() {
         return GridView.count(
           shrinkWrap: true,
           crossAxisCount: 3,
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 10,
+          mainAxisSpacing: 40,
+          crossAxisSpacing: 40,
           childAspectRatio: 0.75,
           children: [
             topContainerItems(context,
@@ -43,30 +48,26 @@ topContainer() {
                 icon: Icons.playlist_play,
                 title: 'Playlists',
                 page: const PlaylistScreen()),
-            // topContainerItems(context,
-            //     color: Colors.white,
-            //     icon: Icons.playlist_play,
-            //     title: 'Most Played',
-            //     page: PlaylistSongScreen(
-            //       playlist: state.playlists?[0],
-            //       songList: [],
-            //     )),
-            // topContainerItems(context,
-            //     color: Colors.blue,
-            //     icon: Icons.playlist_play,
-            //     title: 'Recently Added',
-            //     page: PlaylistSongScreen(
-            //       playlist: state.playlists![0],
-            //       songList: [],
-            //     )),
-            // topContainerItems(context,
-            //     color: Colors.green,
-            //     icon: Icons.favorite,
-            //     title: 'Favorites',
-            //     page: PlaylistSongScreen(
-            //       playlist: state.playlists![0],
-            //       songList: [],
-            //     ))
+            topContainerItems(context,
+                color: Colors.white,
+                icon: Icons.playlist_play,
+                title: 'Most Played',
+                page: MostPlayedSongsScreen()),
+            topContainerItems(context,
+                color: Colors.blue,
+                icon: Icons.playlist_play,
+                title: 'Recently Added',
+                page: const AllSongsScreen(
+                  sortBy: SortSong.dateAdded,
+                )),
+            topContainerItems(context,
+                color: Colors.green,
+                icon: Icons.favorite,
+                title: 'Favorites',
+                page: PlaylistSongScreen(
+                  playlist: state.playlists![0],
+                  songList: [],
+                ))
           ],
         );
       } else {
@@ -92,10 +93,16 @@ topContainerItems(BuildContext context,
         AspectRatio(
           aspectRatio: 1,
           child: Container(
+            height: 50,
+            width: 50,
             decoration: BoxDecoration(
                 color: color, borderRadius: BorderRadius.circular(10)),
             child: Center(
-              child: Icon(icon),
+              child: Icon(
+                icon,
+                size: 32,
+                color: Theme.of(context).primaryColor,
+              ),
             ),
           ),
         ),
@@ -123,9 +130,10 @@ class FavoriteSongsContainer extends StatelessWidget {
           );
         } else if (state is LibraryLoaded) {
           // if (audioList.isEmpty) {
-            return const Center(
-              child: Text('No Song in this Playlist'),
-            );
+          return const SizedBox();
+          // Center(
+          //   child: Text('No Song in this Playlist'),
+          // );
           // } else {
           //   return Container(
           //     margin: const EdgeInsets.symmetric(vertical: 10),
@@ -204,6 +212,91 @@ class FavoriteSongsContainer extends StatelessWidget {
       },
     );
   }
+}
+
+Widget recentlyAdded() {
+  return BlocConsumer<LibraryBloc, LibraryState>(listener: (context, state) {
+    if (state is LibraryError) {
+      ErrorSnackbar(error: state.error, context: context);
+    }
+  }, builder: (context, state) {
+    if (state is LibraryLoaded) {
+      final List<SongModel> songList = state.songs;
+      if (songList.isEmpty) {
+        return const SizedBox();
+      } else {
+        songList.sort(
+          (a, b) => b.dateAdded!.compareTo(a.dateAdded!),
+        );
+        return ListView(
+          shrinkWrap: true,
+          physics: const ClampingScrollPhysics(),
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Recently Added'),
+                GestureDetector(
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AllSongsScreen(
+                                  sortBy: SortSong.dateAdded,
+                                ))),
+                    child: const Text('view all'))
+              ],
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            ListView.builder(
+                shrinkWrap: true,
+                physics: const ClampingScrollPhysics(),
+                itemCount: songList.length > 10 ? 10 : songList.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => NowPlayingScreen(
+                                  player:
+                                      context.read<PlayerBloc>().state.player!,
+                                  playlist: createPlaylist(songList),
+                                  songIndex: index,
+                                ))),
+                    leading: AspectRatio(
+                      aspectRatio: 1,
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: artworkWidget(
+                              audioId: songList[index].id,
+                              artworkType: ArtworkType.AUDIO)),
+                    ),
+                    title: Text(
+                      songList[index].title,
+                      softWrap: true,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    subtitle: Text(
+                      songList[index].artist!,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    trailing: durationWidget(
+                        context: context, duration: songList[index].duration!),
+                  );
+                }),
+          ],
+        );
+      }
+    } else {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+  });
 }
 
 Widget genreContainer() {

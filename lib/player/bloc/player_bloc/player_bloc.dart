@@ -9,14 +9,6 @@ part 'player_event.dart';
 part 'player_state.dart';
 
 class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
-  // final equalizer = AndroidEqualizer();
-  // final loudnessEnhancer = AndroidLoudnessEnhancer();
-
-  // late final player = AudioPlayer(
-  //     audioPipeline: AudioPipeline(androidAudioEffects: [equalizer,
-  //   loudnessEnhancer,
-  // ]));
-
   PlayerBloc() : super(PlayerInitial()) {
     on<PlayerInitialize>(onPlayerInitialize);
   }
@@ -27,10 +19,10 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     final loudnessEnhancer = AndroidLoudnessEnhancer();
 
     final player = AudioPlayer(
-        audioPipeline: AudioPipeline(androidAudioEffects: [
-      equalizer,
-      loudnessEnhancer,
-    ])
+      //   audioPipeline: AudioPipeline(androidAudioEffects: [
+      // equalizer,
+      // loudnessEnhancer,
+    // ])
     );
 
 

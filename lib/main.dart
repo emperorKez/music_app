@@ -1,35 +1,49 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:music_app/app/bloc/app_bloc/app_bloc.dart';
 import 'package:music_app/app/common/theme.dart';
 import 'package:music_app/app/repository/app_repo.dart';
 import 'package:music_app/app/view/screen/home_screen.dart';
 import 'package:music_app/library/bloc/library_fetch_bloc/library_fetch_bloc.dart';
 import 'package:music_app/library/bloc/search_bloc/search_bloc.dart';
+import 'package:music_app/library/repository/database.dart';
 import 'package:music_app/library/repository/services.dart';
 import 'package:music_app/player/bloc/player_bloc/player_bloc.dart';
 
+// late AudioHandler audioHandler;
+// final equalizer = AndroidEqualizer();
+// final loudnessEnhancer = AndroidLoudnessEnhancer();
+
+final player = AudioPlayer();
 
 Future<void> main() async {
-  // await JustAudioBackground.init(
-  //   androidNotificationChannelId: 'com.example.music_app.channel.audio',
-  //   androidNotificationChannelName: 'Music playback',
-  //   androidNotificationOngoing: true,
+  await JustAudioBackground.init(
+    androidNotificationChannelId: 'com.example.music_app.channel.audio',
+    androidNotificationChannelName: 'Music playback',
+    androidNotificationOngoing: true,
+  );
+
+  // _audioHandler = await AudioService.init(
+  //   builder: () => AudioPlayerHandler(),
+  //   config: const AudioServiceConfig(
+  //     androidNotificationChannelId: 'com.example.music_app.channel.audio',
+  //     androidNotificationChannelName: 'Music playback',
+  //     androidNotificationOngoing: true,
+  //     androidStopForegroundOnPause: true,
+  //   ),
   // );
 
-  await AudioService.init(
-    // builder: () => MyAudioHandler(),
-    builder: () => MyAudioHandler(),
-    config: const AudioServiceConfig(
-      androidNotificationChannelId: 'com.example.music_app.channel.audio',
-      androidNotificationChannelName: 'Music playback',
-      androidNotificationOngoing: true,
-      androidStopForegroundOnPause: true,
-    ),
-  );
+  final session = await AudioSession.instance;
+  await session.configure(const AudioSessionConfiguration.music());
+
+  // await DatabaseService().createDatabase();
+
+  // player = AudioPlayer();
 
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
@@ -48,7 +62,10 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => AppBloc(appRepo: AppRepository())),
-        BlocProvider(create: (context) => PlayerBloc() ..add(PlayerInitialize()), lazy: false,),
+        BlocProvider(
+          create: (context) => PlayerBloc()..add(PlayerInitialize()),
+          lazy: false,
+        ),
         BlocProvider(create: (context) => SearchBloc()),
         BlocProvider(
           create: (context) => LibraryBloc(appRepo: LibraryRepository())
@@ -56,8 +73,7 @@ class MyApp extends StatelessWidget {
           lazy: false,
         ),
       ],
-      child: 
-      MaterialApp(
+      child: MaterialApp(
         title: 'Music App',
         theme: lightTheme,
         debugShowCheckedModeBanner: false,
@@ -67,22 +83,29 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyAudioHandler extends BaseAudioHandler {
-  // TODO: Override needed methods
-  final _player = AudioPlayer();
+// class AudioPlayerHandler extends BaseAudioHandler {
+//   // TODO: Override needed methods
 
-  @override
-  Future<void> play() => _player.play();
+//   final player = AudioPlayer(
+//       audioPipeline: AudioPipeline(androidAudioEffects: [
+//     equalizer,
+//     loudnessEnhancer,
+//   ]));
 
-  @override
-  Future<void> pause() => _player.pause();
+//   final _player = AudioPlayer();
 
-  @override
-  Future<void> skipToNext() => _player.seekToNext();
+//   @override
+//   Future<void> play() => _player.play();
 
-  @override
-  Future<void> skipToPrevious() => _player.seekToPrevious();
+//   @override
+//   Future<void> pause() => _player.pause();
 
-  @override
-  Future<void> seek(Duration position) => _player.seek(position);
-}
+//   @override
+//   Future<void> skipToNext() => _player.seekToNext();
+
+//   @override
+//   Future<void> skipToPrevious() => _player.seekToPrevious();
+
+//   @override
+//   Future<void> seek(Duration position) => _player.seek(position);
+// }
