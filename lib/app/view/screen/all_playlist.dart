@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:music_app/app/common/bottom_navigation.dart';
 import 'package:music_app/app/view/screen/playlist_songs.dart';
 import 'package:music_app/app/view/widget/error_snackbar.dart';
 import 'package:music_app/library/bloc/library_fetch_bloc/library_fetch_bloc.dart';
@@ -17,7 +16,7 @@ class PlaylistScreen extends StatelessWidget {
         centerTitle: true,
       ),
       floatingActionButton: floatingActionWidget(),
-      bottomNavigationBar: const BottomNavBar(activeIndex: 2),
+      // bottomNavigationBar: const BottomNavBar(activeIndex: 2),
       body: body(),
     ));
   }
@@ -42,9 +41,9 @@ class PlaylistScreen extends StatelessWidget {
               : GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                      childAspectRatio: 0.75),
+                      mainAxisSpacing: 15,
+                      crossAxisSpacing: 15,
+                      childAspectRatio: 0.8),
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () => Navigator.push(

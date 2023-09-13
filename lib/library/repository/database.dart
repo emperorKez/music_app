@@ -28,8 +28,7 @@ class DatabaseProvider {
     final Database db = await initializeDb();
     List<Map<String, dynamic>> maps = await db.query('played_count',
         columns: ['count', 'song_id'], where: '${"song_id"} = ?', whereArgs: [songId]);
-    print(songId);
-    print(maps);
+    
     if (maps.isNotEmpty) {
       PlayedCountData existingData = PlayedCountData.fromMap(maps.first);
       int newCount = existingData.count + 1;
@@ -43,14 +42,11 @@ class DatabaseProvider {
   Future<List<PlayedCountData>>? fetchCountData() async {
     final Database db = await initializeDb();
     var data = await db.query('played_count',
-        columns: ['count', 'song_id'], orderBy: 'count');
+        columns: ['count', 'song_id'], orderBy: 'count DESC');
     List<PlayedCountData> playedCountList = [];
     for (var item in data) {
       playedCountList.add(PlayedCountData.fromMap(item));
     }
-    print('dadaddadddd');
-    print(data);
-    // print(playedCountList);
     return playedCountList;
   }
 }

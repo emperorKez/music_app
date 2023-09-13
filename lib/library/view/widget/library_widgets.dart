@@ -19,14 +19,8 @@ Widget durationWidget({required BuildContext context, required int duration}) {
       style: Theme.of(context).textTheme.bodySmall);
 }
 
-createPlaylist(List<SongModel> songList) {
-  List<String> uriList = [];
-  // for (var e in songList) {
-  //   uriList.add(await LibraryRepository().fetchArtwork(e.id) );
-    
-    
-  // }
-  // print(uriList);
+createNowPlaylist(List<SongModel> songList) {
+ 
 
   return ConcatenatingAudioSource(
       children: List.generate(songList.length, (index)  {
@@ -36,7 +30,8 @@ createPlaylist(List<SongModel> songList) {
             album: songList[index].album!,
             artist: songList[index].artist!,
             title: songList[index].title,
-            // artUri: Uri.file(uriList[index])
+            //  artUri: Uri.dataFromBytes(LibraryRepository().fetchArtwork(songList[index].id) )
+            //  artUri: Uri.
             ));
   }));
 }
@@ -56,7 +51,7 @@ Widget gridViewWidget(List<SongModel> songList) {
               MaterialPageRoute(
                   builder: (context) => NowPlayingScreen(
                         player: context.read<PlayerBloc>().state.player!,
-                        playlist: createPlaylist(songList),
+                        playlist: createNowPlaylist(songList),
                         songIndex: index,
                       ))),
           child: Column(
@@ -105,6 +100,7 @@ Widget gridViewWidget(List<SongModel> songList) {
 
 Widget listViewWidget(List<SongModel> songList) {
   return ListView.builder(
+    padding: const EdgeInsets.symmetric(horizontal: 15),
       itemCount: songList.length,
       itemBuilder: (context, index) {
         return ListTile(
@@ -114,7 +110,7 @@ Widget listViewWidget(List<SongModel> songList) {
                 MaterialPageRoute(
                     builder: (context) => NowPlayingScreen(
                           player: context.read<PlayerBloc>().state.player!,
-                          playlist: createPlaylist(songList),
+                          playlist: createNowPlaylist(songList),
                           songIndex: index,
                         )));
           },

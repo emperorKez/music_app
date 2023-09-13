@@ -11,9 +11,10 @@ import 'package:music_app/app/repository/app_repo.dart';
 import 'package:music_app/app/view/screen/home_screen.dart';
 import 'package:music_app/library/bloc/library_fetch_bloc/library_fetch_bloc.dart';
 import 'package:music_app/library/bloc/search_bloc/search_bloc.dart';
-import 'package:music_app/library/repository/database.dart';
 import 'package:music_app/library/repository/services.dart';
 import 'package:music_app/player/bloc/player_bloc/player_bloc.dart';
+
+import 'library/bloc/artwork_cubit/artwork_cubit.dart';
 
 // late AudioHandler audioHandler;
 // final equalizer = AndroidEqualizer();
@@ -72,12 +73,17 @@ class MyApp extends StatelessWidget {
             ..add(FetchLibraryData()),
           lazy: false,
         ),
+        BlocProvider(create: (context) => ArtworkCubit(repo: LibraryRepository())),
       ],
-      child: MaterialApp(
-        title: 'Music App',
-        theme: lightTheme,
-        debugShowCheckedModeBanner: false,
-        home: const HomeScreen(),
+      child: BlocBuilder<AppBloc, AppState>(
+        builder: (context, state) {
+          return MaterialApp(
+            title: 'Music App',
+            theme: state.darkMode == true ? ThemeData.dark(useMaterial3: true) : ThemeData.light(useMaterial3: true),
+            debugShowCheckedModeBanner: false,
+            home: const HomeScreen(),
+          );
+        },
       ),
     );
   }

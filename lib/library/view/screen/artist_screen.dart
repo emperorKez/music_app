@@ -185,7 +185,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
                 MaterialPageRoute(
                     builder: (context) => NowPlayingScreen(
                           player: player,
-                          playlist: createPlaylist(audioList),
+                          playlist: createNowPlaylist(audioList),
                           songIndex: index,
                         ))),
             child: Column(
@@ -237,7 +237,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
                 MaterialPageRoute(
                     builder: (context) => NowPlayingScreen(
                           player: player,
-                          playlist: createPlaylist(audioList),
+                          playlist: createNowPlaylist(audioList),
                           songIndex: index,
                         ))),
             leading: AspectRatio(

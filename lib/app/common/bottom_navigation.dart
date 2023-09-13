@@ -35,16 +35,16 @@ class _BottomNavBarState extends State<BottomNavBar> {
   Widget bottomNavWidget() {
     return BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: const Color(0xfff5f5f5),
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
         currentIndex: widget.activeIndex,
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home, color: Theme.of(context).primaryColor), label: 'Home'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.play_arrow), label: 'Now Playing'),
+              icon: Icon(Icons.play_arrow, color: Theme.of(context).primaryColor), label: 'Now Playing'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.library_music), label: 'Library'),
+              icon: Icon(Icons.library_music, color: Theme.of(context).primaryColor), label: 'Library'),
         ],
         onTap: (index) {
           setState(

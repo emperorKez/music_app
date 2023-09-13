@@ -2,8 +2,10 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:music_app/library/bloc/library_fetch_bloc/library_fetch_bloc.dart';
 import 'package:music_app/library/repository/database.dart';
 // import 'package:music_app/main.dart';
 import 'package:music_app/player/utils/common.dart';
@@ -81,10 +83,17 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
       // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
 
       await widget.player.setAudioSource(
-          widget.playlist ?? AudioSource.asset('assets/songs/default.mp3'),
+          widget.playlist ?? AudioSource.asset('assets/songs/default.mp3', tag: const MediaItem(
+            id: 'default',
+            album: 'default',
+            artist: 'default',
+            title: 'default',
+            )),
           initialIndex: widget.songIndex);
 
-      widget.player.play();
+      if (widget.playlist != null) {
+        widget.player.play();
+      }
 
       // await player.setAudioSource(
       //     widget.playlist ?? AudioSource.asset('assets/songs/default.mp3'),
@@ -182,8 +191,14 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
           if (state?.sequence.isEmpty ?? true) {
             return const SizedBox();
           }
+
           final metadata = state!.currentSource!.tag as MediaItem;
+         
+
+          // count song as played
+          if (widget.playlist != null){
           DatabaseProvider().updatePlayedCount(songId: int.parse(metadata.id));
+          }
 
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -192,16 +207,14 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: Center(child: Text(metadata.id)
-                      // AspectRatio(
-                      //   aspectRatio: 1,
-                      //   child: ClipRRect(
-                      //       borderRadius: BorderRadius.circular(10),
-                      //       child: artworkWidget(
-                      //           audioId: int.parse(metadata.id),
-                      //           artworkType: ArtworkType.AUDIO)),
-                      // ),
-                      ),
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: artworkWidget(
+                            audioId: int.parse(metadata.id),
+                            artworkType: ArtworkType.AUDIO)),
+                  ),
                 ),
 
                 //const Spacer(),
@@ -209,8 +222,16 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
                 const SizedBox(
                   height: 10,
                 ),
-                EnhancementControl(
-                  player: widget.player,
+                BlocBuilder<LibraryBloc, LibraryState>(
+                  builder: (context, state) {
+                    if (state is LibraryLoaded) {
+                      return EnhancementControl(
+                          player: widget.player,
+                          song: state.songs[int.parse(metadata.id)]);
+                    } else {
+                      return const CircularProgressIndicator();
+                    }
+                  },
                 ),
                 songProgressBar(widget.player),
                 const SizedBox(
@@ -222,6 +243,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
           );
         });
   }
+
 
   Widget songDetail(MediaItem metadata) {
     return Column(
@@ -245,6 +267,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
       ],
     );
   }
+
 
   // Widget player() {
   //   return Container(
@@ -281,6 +304,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
   //   );
   // }
 
+
   Widget songProgressBar(AudioPlayer player) {
     // Display seek bar. Using StreamBuilder, this widget rebuilds
     // each time the position, buffered position or duration changes.
@@ -297,6 +321,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
       },
     );
   }
+  
 
   // void showItemFinished(int? index) {
   //   if (index == null) return;

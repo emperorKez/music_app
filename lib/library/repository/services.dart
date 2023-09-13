@@ -93,13 +93,14 @@ class LibraryRepository {
       audioId,
       ArtworkType.AUDIO,
     );
+    return data;
 
-    //Uint8List imageBytes;
-    Directory dir = await getApplicationCacheDirectory();
-    final imageFile = Directory('${dir.path}/$audioId.png').path;
+    // //Uint8List imageBytes;
+    // Directory dir = await getApplicationCacheDirectory();
+    // final imageFile = Directory('${dir.path}/$audioId.png').path;
 
-    File(imageFile).writeAsBytes(data!);
-    return imageFile;
+    // File(imageFile).writeAsBytes(data!);
+    // return imageFile;
   }
 
   Future<void> deleteAudioFile({required File audioFile}) async {

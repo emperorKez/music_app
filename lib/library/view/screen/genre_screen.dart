@@ -24,6 +24,7 @@ class _GenreScreenState extends State<GenreScreen> {
   late AudioPlayer player;
   bool isGridView = false;
 
+
   @override
   Widget build(BuildContext context) {
     player = context.read<PlayerBloc>().state.player!;
@@ -49,6 +50,7 @@ class _GenreScreenState extends State<GenreScreen> {
       body: body(),
     ));
   }
+  
 
   Widget body() {
     return BlocConsumer<LibraryBloc, LibraryState>(
@@ -85,7 +87,5 @@ class _GenreScreenState extends State<GenreScreen> {
         }
       },
     );
-  }
-
-  
+  } 
 }

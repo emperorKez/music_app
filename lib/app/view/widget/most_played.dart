@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:music_app/library/bloc/library_fetch_bloc/library_fetch_bloc.dart';
 import 'package:music_app/library/repository/database.dart';
-import 'package:music_app/library/view/screen/all_songs.dart';
 import 'package:music_app/library/view/widget/library_widgets.dart';
 import 'package:music_app/player/bloc/player_bloc/player_bloc.dart';
 import 'package:music_app/player/screen/now_playing.dart';
@@ -42,23 +41,18 @@ class _MostPlayedSongsScreenState extends State<MostPlayedSongsScreen> {
                   (context, AsyncSnapshot<List<PlayedCountData>> snapshot) {
                 if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                   return ListView(
+                      padding: EdgeInsets.zero,
                       shrinkWrap: true,
                       physics: const ClampingScrollPhysics(),
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            Text('Most played'),
-                            // GestureDetector(
-                            //     onTap: () => Navigator.push(
-                            //         context,
-                            //         MaterialPageRoute(
-                            //             builder: (context) => const AllSongsScreen(
-                            //                   sortBy: SortSong.dateAdded,
-                            //                 ))),
-                            //     child: const Text('view all'))
-                          ],
-                        ),
+                        Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 15),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                            child: const Text('Top Played')),
                         const SizedBox(
                           height: 15,
                         ),
@@ -87,7 +81,7 @@ class _MostPlayedSongsScreenState extends State<MostPlayedSongsScreen> {
                                                   .state
                                                   .player!,
                                               playlist:
-                                                  createPlaylist(songList),
+                                                  createNowPlaylist(songList),
                                               songIndex: index,
                                             ))),
                                 leading: AspectRatio(
@@ -117,7 +111,7 @@ class _MostPlayedSongsScreenState extends State<MostPlayedSongsScreen> {
                             })
                       ]);
                 } else {
-                  return SizedBox();
+                  return const SizedBox();
                 }
               });
         } else {

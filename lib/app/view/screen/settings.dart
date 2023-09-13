@@ -49,19 +49,6 @@ class _SettingScreenState extends State<SettingsScreen> {
                     iconColor: Theme.of(context).primaryColor,
                   ),
                   ListTile(
-                    leading: const Icon(Icons.hide_image_sharp),
-                    title: const Text('Hide from Search'),
-                    tileColor: tileColor,
-                    shape: tileShape,
-                    trailing: Switch(
-                        activeColor: Theme.of(context).primaryColor,
-                        value: hideProfile,
-                        onChanged: (value) {
-                          hideProfile = value;
-                        }),
-                    iconColor: Theme.of(context).primaryColor,
-                  ),
-                  ListTile(
                     leading: const Icon(Icons.dark_mode_rounded),
                     title: const Text('Dark Mode'),
                     tileColor: tileColor,
