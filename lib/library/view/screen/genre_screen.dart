@@ -8,7 +8,6 @@ import 'package:music_app/library/view/widget/library_widgets.dart';
 import 'package:music_app/player/bloc/player_bloc/player_bloc.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-
 class GenreScreen extends StatefulWidget {
   const GenreScreen({
     Key? key,
@@ -23,7 +22,6 @@ class GenreScreen extends StatefulWidget {
 class _GenreScreenState extends State<GenreScreen> {
   late AudioPlayer player;
   bool isGridView = false;
-
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +48,6 @@ class _GenreScreenState extends State<GenreScreen> {
       body: body(),
     ));
   }
-  
 
   Widget body() {
     return BlocConsumer<LibraryBloc, LibraryState>(
@@ -70,7 +67,8 @@ class _GenreScreenState extends State<GenreScreen> {
           //   state.songs.where((e) => e.genreId == widget.genre.id)
 
           // }
-          audioList.addAll(state.songs.where((e) => e.genreId == widget.genre.id));
+          audioList
+              .addAll(state.songs.where((e) => e.genreId == widget.genre.id));
           if (audioList.isEmpty) {
             return const Center(
               child: Text('No Song in this Genre'),
@@ -87,5 +85,5 @@ class _GenreScreenState extends State<GenreScreen> {
         }
       },
     );
-  } 
+  }
 }

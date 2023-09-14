@@ -118,8 +118,8 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
   //   }
   // }
 
-  @override
-  void didChangeDependencies() {}
+  // @override
+  // void didChangeDependencies() {}
 
   /// Collects the data useful for displaying in a seek bar, using a handy
   /// feature of rx_dart to combine the 3 streams of interest into one.
@@ -218,9 +218,9 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
                             //             (e) => e.id == int.parse(metadata.id))]);
                             // }
 
-                            print('metadata Id = ${metadata.id}');
-                            print('metadata Title = ${metadata.title}');
-                            print('metadata Artist = ${metadata.artist}');
+                            // print('metadata Id = ${metadata.id}');
+                            // print('metadata Title = ${metadata.title}');
+                            // print('metadata Artist = ${metadata.artist}');
 
                             return EnhancementControl(
                               player: player,

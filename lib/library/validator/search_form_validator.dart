@@ -5,8 +5,6 @@ class SearchFormValidator {
   });
 
   bool validateKeyword() {
-   return keyword!.length > 3
-        ? true
-        : false;
+    return keyword!.length > 3 ? true : false;
   }
 }

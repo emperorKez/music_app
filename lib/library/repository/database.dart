@@ -1,10 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
 import 'dart:core';
-import 'dart:io';
 
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseProvider {
@@ -27,8 +25,10 @@ class DatabaseProvider {
   void updatePlayedCount({required int songId}) async {
     final Database db = await initializeDb();
     List<Map<String, dynamic>> maps = await db.query('played_count',
-        columns: ['count', 'song_id'], where: '${"song_id"} = ?', whereArgs: [songId]);
-    
+        columns: ['count', 'song_id'],
+        where: '${"song_id"} = ?',
+        whereArgs: [songId]);
+
     if (maps.isNotEmpty) {
       PlayedCountData existingData = PlayedCountData.fromMap(maps.first);
       int newCount = existingData.count + 1;

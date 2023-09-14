@@ -9,13 +9,13 @@ import 'package:music_app/player/utils/common.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class EnhancementControl extends StatelessWidget {
-  const EnhancementControl({
-    Key? key,
-    required this.player,
-    // required this.equalizer,
-    // required this.loudnessEnhancer,
-     this.song
-  }) : super(key: key);
+  const EnhancementControl(
+      {Key? key,
+      required this.player,
+      // required this.equalizer,
+      // required this.loudnessEnhancer,
+      this.song})
+      : super(key: key);
   final AudioPlayer player;
   final SongModel? song;
   // final AndroidEqualizer equalizer;
@@ -28,7 +28,9 @@ class EnhancementControl extends StatelessWidget {
         _volumeSlider(context: context),
         _equalizer(context),
         const Spacer(),
-        song != null ? _addToPlaylist(context, songId: song!.id) : const SizedBox(),
+        song != null
+            ? _addToPlaylist(context, songId: song!.id)
+            : const SizedBox(),
         _speedSlider()
       ],
     );
@@ -88,15 +90,14 @@ class EnhancementControl extends StatelessWidget {
   }
 
   Widget _addToPlaylist(BuildContext context, {required int songId}) {
-    return IconButton(onPressed: () {
-      return showContentDialog(context: context, songId: songId);
-    }, icon: const Icon(Icons.playlist_add));
+    return IconButton(
+        onPressed: () {
+          return showContentDialog(context: context, songId: songId);
+        },
+        icon: const Icon(Icons.playlist_add));
   }
 
-  void showContentDialog({
-    required BuildContext context,
-    required int songId
-  }) {
+  void showContentDialog({required BuildContext context, required int songId}) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -107,17 +108,25 @@ class EnhancementControl extends StatelessWidget {
             right: 40,
           ),
           // title: Text(title, textAlign: TextAlign.center),
-          content: BlocBuilder<LibraryBloc, LibraryState>(
-            builder: (context, state) {
-              if (state is LibraryLoaded){
+          content:
+              BlocBuilder<LibraryBloc, LibraryState>(builder: (context, state) {
+            if (state is LibraryLoaded) {
               return Column(
                 mainAxisSize: MainAxisSize.min,
-                children: List.generate(state.playlists!.length, (index) => GestureDetector(onTap: () => LibraryRepository().addToPlaylist(playlistId: state.playlists![index].id, audioId: songId),)),
-              );} else{
-                return Center(child: CircularProgressIndicator(),);
-              }
+                children: List.generate(
+                    state.playlists!.length,
+                    (index) => GestureDetector(
+                          onTap: () => LibraryRepository().addToPlaylist(
+                              playlistId: state.playlists![index].id,
+                              audioId: songId),
+                        )),
+              );
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
             }
-          )),
+          })),
     );
   }
 }

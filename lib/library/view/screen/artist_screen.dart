@@ -164,8 +164,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
         const SizedBox(
           height: 15,
         ),
-        isGridView == true ? 
-        gridViewWidget(songs) : listViewWidget(songs)
+        isGridView == true ? gridViewWidget(songs) : listViewWidget(songs)
       ],
     );
   }
@@ -182,12 +181,15 @@ class _ArtistScreenState extends State<ArtistScreen> {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              context.read<PlayerBloc>().add(ChangePlaylist(playlist: createNowPlaylist(audioList), songIndex: index));
-               Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-               NowPlayingScreen(player: context.read<PlayerBloc>().state.player!,)));},
+              context.read<PlayerBloc>().add(ChangePlaylist(
+                  playlist: createNowPlaylist(audioList), songIndex: index));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => NowPlayingScreen(
+                            player: context.read<PlayerBloc>().state.player!,
+                          )));
+            },
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -233,13 +235,15 @@ class _ArtistScreenState extends State<ArtistScreen> {
         itemBuilder: (context, index) {
           return ListTile(
             onTap: () {
-              context.read<PlayerBloc>().add(ChangePlaylist(playlist: createNowPlaylist(audioList), songIndex: index));
-               Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => NowPlayingScreen(
-                          player: context.read<PlayerBloc>().state.player!,
-                        )));},
+              context.read<PlayerBloc>().add(ChangePlaylist(
+                  playlist: createNowPlaylist(audioList), songIndex: index));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => NowPlayingScreen(
+                            player: context.read<PlayerBloc>().state.player!,
+                          )));
+            },
             leading: AspectRatio(
               aspectRatio: 1,
               child: ClipRRect(

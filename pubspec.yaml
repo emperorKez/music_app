@@ -33,6 +33,7 @@ dependencies:
 
   just_audio_background:
   just_audio:
+  just_audio_platform_interface:
   audio_session:
   audio_service:
 

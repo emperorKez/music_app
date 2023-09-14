@@ -12,6 +12,7 @@ part 'player_state.dart';
 class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
   PlayerBloc() : super(PlayerInitial()) {
     on<PlayerInitialize>(onPlayerInitialize);
+    on<PlayerDefaultPlaylist>(onPlayerDefaultPlaylist);
     on<ChangePlaylist>(onChangePlaylist);
     on<AddToPlaylist>(onAddToPlaylist);
     on<ClearPlaylist>(onClearPlaylist);
@@ -19,34 +20,41 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
 
   Future<void> onPlayerInitialize(
       PlayerInitialize event, Emitter<PlayerState> emit) async {
-        try {
-          
-        
-    final equalizer = AndroidEqualizer();
-    final loudnessEnhancer = AndroidLoudnessEnhancer();
+    try {
+      final equalizer = AndroidEqualizer();
+      final loudnessEnhancer = AndroidLoudnessEnhancer();
 
-    final player = AudioPlayer(
-        //   audioPipeline: AudioPipeline(androidAudioEffects: [
-        // equalizer,
-        // loudnessEnhancer,
-        // ])
-        );
+      final player = AudioPlayer(
+          //   audioPipeline: AudioPipeline(androidAudioEffects: [
+          // equalizer,
+          // loudnessEnhancer,
+          // ])
+          );
 
-    final session = await AudioSession.instance;
-    await session.configure(const AudioSessionConfiguration.music());
+      final session = await AudioSession.instance;
+      await session.configure(const AudioSessionConfiguration.music());
 
-    int randomNumber = Random().nextInt(event.libraryLength);
+      // await player.setAudioSource(event.defaultList, initialIndex: randomNumber);
 
-    await player.setAudioSource(event.defaultList, initialIndex: randomNumber);
+      emit(PlayerLoaded(player: player, playlist: null));
+    } catch (e) {
+      emit(PlayerError(err: e.toString()));
+    }
+  }
 
-    emit(PlayerLoaded(
-        player: player,
-        equalizer: equalizer,
-        loudnessEnhancer: loudnessEnhancer,
-        playlist: event.defaultList));
-        } catch (e) {
-          emit(PlayerError(err: e.toString()));
-        }
+  Future<void> onPlayerDefaultPlaylist(
+      PlayerDefaultPlaylist event, Emitter<PlayerState> emit) async {
+    try {
+      final AudioPlayer player = state.player!;
+      emit(PlayerLoading(player: player));
+      int randomNumber = Random().nextInt(event.libraryLength);
+      await player.setAudioSource(event.defaultList,
+          initialIndex: randomNumber);
+
+      emit(PlayerLoaded(player: player, playlist: event.defaultList));
+    } catch (e) {
+      emit(PlayerError(err: e.toString()));
+    }
   }
 
   Future<void> onChangePlaylist(
@@ -54,15 +62,15 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     final player = state.player;
     emit(PlayerLoading(player: player));
     try {
+      final session = await AudioSession.instance;
+      await session.configure(const AudioSessionConfiguration.music());
 
-     final session = await AudioSession.instance;
-    await session.configure(const AudioSessionConfiguration.music());
-
-    await player!.setAudioSource(event.playlist, initialIndex: event.songIndex);
-    emit(PlayerLoaded(player: player, playlist: event.playlist));
+      await player!
+          .setAudioSource(event.playlist, initialIndex: event.songIndex);
+      emit(PlayerLoaded(player: player, playlist: event.playlist));
     } catch (e) {
-          emit(PlayerError(err: e.toString()));
-        }
+      emit(PlayerError(err: e.toString()));
+    }
   }
 
   Future<void> onAddToPlaylist(
@@ -70,13 +78,13 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     final player = state.player;
     emit(PlayerLoading(player: player));
     try {
-    ConcatenatingAudioSource? playlist = state.playlist;
-    playlist?.add(event.audioSource);
+      ConcatenatingAudioSource? playlist = state.playlist;
+      playlist?.add(event.audioSource);
 
-    emit(PlayerLoaded(player: player, playlist: playlist));
+      emit(PlayerLoaded(player: player, playlist: playlist));
     } catch (e) {
-          emit(PlayerError(err: e.toString()));
-        }
+      emit(PlayerError(err: e.toString()));
+    }
   }
 
   Future<void> onClearPlaylist(
@@ -84,9 +92,9 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     final player = state.player;
     emit(PlayerLoading(player: player));
     try {
-    emit(PlayerLoaded(player: player, playlist: null));
+      emit(PlayerLoaded(player: player, playlist: null));
     } catch (e) {
-          emit(PlayerError(err: e.toString()));
-        }
+      emit(PlayerError(err: e.toString()));
+    }
   }
 }

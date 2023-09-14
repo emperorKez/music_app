@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:music_app/app/view/screen/home_screen.dart';
-import 'package:music_app/app/view/widget/data.dart';
 import 'package:music_app/library/bloc/library_fetch_bloc/library_fetch_bloc.dart';
 import 'package:music_app/library/view/screen/all_songs.dart';
 import 'package:music_app/player/bloc/player_bloc/player_bloc.dart' as blocs;
@@ -25,18 +24,17 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
-        return bottomNavWidget(context);      
+    return bottomNavWidget(context);
   }
 
   Widget bottomNavWidget(context) {
-    
     return BlocBuilder<LibraryBloc, LibraryState>(
       builder: (context, state) {
-        if (state is LibraryLoaded){
-        return BlocBuilder<blocs.PlayerBloc, blocs.PlayerState>(
-          builder: (context, state) {
-            if (state is blocs.PlayerLoaded){
-            return BottomNavigationBar(
+        if (state is LibraryLoaded) {
+          return BlocBuilder<blocs.PlayerBloc, blocs.PlayerState>(
+            builder: (context, state) {
+              if (state is blocs.PlayerLoaded) {
+                return BottomNavigationBar(
                     type: BottomNavigationBarType.fixed,
                     backgroundColor: Theme.of(context).colorScheme.onPrimary,
                     currentIndex: widget.activeIndex,
@@ -44,11 +42,12 @@ class _BottomNavBarState extends State<BottomNavBar> {
                     showUnselectedLabels: false,
                     items: [
                       BottomNavigationBarItem(
-                          icon: Icon(Icons.home, color: Theme.of(context).primaryColor),
+                          icon: Icon(Icons.home,
+                              color: Theme.of(context).primaryColor),
                           label: 'Home'),
                       BottomNavigationBarItem(
-                          icon:
-                              Icon(Icons.play_arrow, color: Theme.of(context).primaryColor),
+                          icon: Icon(Icons.play_arrow,
+                              color: Theme.of(context).primaryColor),
                           label: 'Now Playing'),
                       BottomNavigationBarItem(
                           icon: Icon(Icons.library_music,
@@ -59,38 +58,45 @@ class _BottomNavBarState extends State<BottomNavBar> {
                       setState(
                         () {
                           _currentIndex = index;
-            
+
                           String activeState = _currentIndex.toString();
                           switch (activeState) {
                             case '0':
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const HomeScreen()));
+                                      builder: (context) =>
+                                          const HomeScreen()));
                               break;
                             case '1':
-                            print(state.playlist!.length);
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => NowPlayingScreen(player: context.read<blocs.PlayerBloc>().state.player!))); //Category Screen
+                                      builder: (context) => NowPlayingScreen(
+                                          player: context
+                                              .read<blocs.PlayerBloc>()
+                                              .state
+                                              .player!))); //Category Screen
                               break;
                             case '2':
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const AllSongsScreen()));
+                                      builder: (context) =>
+                                          const AllSongsScreen()));
                               break;
                           }
                         },
                       );
-                    });} else {
-                      return const CircularProgressIndicator();
-                    }
-          },
-        );} else{
-              return const CircularProgressIndicator();
-            }
+                    });
+              } else {
+                return const CircularProgressIndicator();
+              }
+            },
+          );
+        } else {
+          return const CircularProgressIndicator();
+        }
       },
     );
   }

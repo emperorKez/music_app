@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:music_app/app/common/bottom_navigation.dart';
 import 'package:music_app/app/view/widget/error_snackbar.dart';
 import 'package:music_app/library/bloc/library_fetch_bloc/library_fetch_bloc.dart';
 import 'package:music_app/library/bloc/search_bloc/search_bloc.dart';
@@ -51,9 +50,9 @@ class _AllSongsScreenState extends State<AllSongsScreen> {
         ],
         centerTitle: true,
       ),
-      bottomNavigationBar: const BottomNavBar(
-        activeIndex: 2,
-      ),
+      // bottomNavigationBar: const BottomNavBar(
+      //   activeIndex: 2,
+      // ),
       body: body(),
     ));
   }

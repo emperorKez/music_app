@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -7,13 +5,14 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child: Drawer(
+    return SafeArea(
+        child: Drawer(
       child: ListView(
-        shrinkWrap: true, 
+        shrinkWrap: true,
         children: const [
-           ListTile(
-            leading: Icon(Icons.settings), 
-            title: Text('Settings'), 
+          ListTile(
+            leading: Icon(Icons.settings),
+            title: Text('Settings'),
             trailing: Icon(Icons.arrow_forward_ios),
           )
         ],

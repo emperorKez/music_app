@@ -24,13 +24,14 @@ createNowPlaylist(List<SongModel> songList) {
       children: List.generate(songList.length, (index) {
     return AudioSource.file(songList[index].data,
         tag: MediaItem(
-          id: '${songList[index].id}',
-          album: songList[index].album!,
-          artist: songList[index].artist!,
-          title: songList[index].title,
-          //  artUri: Uri.dataFromBytes(LibraryRepository().fetchArtwork(songList[index].id) )
-          //  artUri: Uri.
-        ));
+            id: '${songList[index].id}',
+            album: songList[index].album!,
+            artist: songList[index].artist!,
+            title: songList[index].title,
+            artUri: Uri.parse('asset:///assets/images/default_artwork.jpg')
+            //  artUri: Uri.dataFromBytes(LibraryRepository().fetchArtwork(songList[index].id) )
+            //  artUri: Uri.
+            ));
   }));
 }
 
@@ -45,15 +46,19 @@ Widget gridViewWidget(List<SongModel> songList) {
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
-              context.read<PlayerBloc>().add(ChangePlaylist(playlist: createNowPlaylist(songList), songIndex: index));
-               Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => NowPlayingScreen(player: context.read<PlayerBloc>().state.player!,)));},
-                  onLongPress: () {
-                      //Todo
-                      showOnPressedDialog(context: context, song: songList[index]);
-                    },
+            context.read<PlayerBloc>().add(ChangePlaylist(
+                playlist: createNowPlaylist(songList), songIndex: index));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => NowPlayingScreen(
+                          player: context.read<PlayerBloc>().state.player!,
+                        )));
+          },
+          onLongPress: () {
+            //Todo
+            showOnPressedDialog(context: context, song: songList[index]);
+          },
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,16 +110,19 @@ Widget listViewWidget(List<SongModel> songList) {
       itemBuilder: (context, index) {
         return ListTile(
           onTap: () {
-            context.read<PlayerBloc>().add(ChangePlaylist(playlist: createNowPlaylist(songList), songIndex: index));
+            context.read<PlayerBloc>().add(ChangePlaylist(
+                playlist: createNowPlaylist(songList), songIndex: index));
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => NowPlayingScreen(player: context.read<PlayerBloc>().state.player!,)));
+                    builder: (context) => NowPlayingScreen(
+                          player: context.read<PlayerBloc>().state.player!,
+                        )));
           },
           onLongPress: () {
-                      //Todo
-                      showOnPressedDialog(context: context, song: songList[index]);
-                    },
+            //Todo
+            showOnPressedDialog(context: context, song: songList[index]);
+          },
           leading: AspectRatio(
             aspectRatio: 1,
             child: ClipRRect(

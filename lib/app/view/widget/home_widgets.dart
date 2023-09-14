@@ -5,7 +5,6 @@ import 'package:just_audio/just_audio.dart';
 import 'package:music_app/app/view/screen/all_playlist.dart';
 import 'package:music_app/app/view/screen/playlist_songs.dart';
 import 'package:music_app/app/view/widget/error_snackbar.dart';
-import 'package:music_app/library/bloc/artwork_cubit/artwork_cubit.dart';
 import 'package:music_app/library/bloc/library_fetch_bloc/library_fetch_bloc.dart';
 import 'package:music_app/library/view/screen/all_artist_screen.dart';
 import 'package:music_app/library/view/screen/all_genre.dart';
@@ -27,23 +26,23 @@ topContainer() {
     },
     builder: (context, state) {
       if (state is LibraryLoaded) {
-        context.read<ArtworkCubit>().saveArtworkToFile(songs: state.songs);
+        //default playlist if there is no playlist loaded
+        if (context.read<blocs.PlayerBloc>().state.playlist == null) {
+          ConcatenatingAudioSource defaultList = ConcatenatingAudioSource(
+              children: List.generate(state.songs.length, (index) {
+            return AudioSource.file(state.songs[index].data,
+                tag: MediaItem(
+                    id: '${state.songs[index].id}',
+                    album: state.songs[index].album!,
+                    artist: state.songs[index].artist!,
+                    title: state.songs[index].title,
+                    artUri: Uri.parse(
+                        'asset:///assets/images/default_artwork.jpg')));
+          }));
+          context.read<blocs.PlayerBloc>().add(blocs.PlayerDefaultPlaylist(
+              defaultList: defaultList, libraryLength: state.songs.length));
+        }
 
-        //default playlist
-        ConcatenatingAudioSource defaultList = ConcatenatingAudioSource(
-            children: List.generate(state.songs.length, (index) {
-          return AudioSource.file(state.songs[index].data,
-              tag: MediaItem(
-                id: '${state.songs[index].id}',
-                album: state.songs[index].album!,
-                artist: state.songs[index].artist!,
-                title: state.songs[index].title,
-              ));
-        }));
-        context.read<blocs.PlayerBloc>().add(blocs.PlayerInitialize(
-            defaultList: defaultList, libraryLength: state.songs.length));
-
-        // final PlaylistModel emptyPlaylist;
         return GridView.count(
           shrinkWrap: true,
           crossAxisCount: 3,
@@ -224,7 +223,8 @@ Widget recentlyAdded() {
                     },
                     onLongPress: () {
                       //Todo
-                      showOnPressedDialog(context: context, song: songList[index]);
+                      showOnPressedDialog(
+                          context: context, song: songList[index]);
                     },
                     leading: AspectRatio(
                       aspectRatio: 1,
@@ -265,7 +265,7 @@ Widget recentlyAdded() {
 }
 
 Widget genreContainer() {
-  return Container(
+  return SizedBox(
     // margin: const EdgeInsets.symmetric(vertical: 10),
     // padding: const EdgeInsets.symmetric(horizontal: 15),
     height: 150,

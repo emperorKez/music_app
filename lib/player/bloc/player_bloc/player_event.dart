@@ -5,24 +5,21 @@ part of 'player_bloc.dart';
 class PlayerEvent {}
 
 class PlayerInitialize extends PlayerEvent {
-  final ConcatenatingAudioSource defaultList;
-  final int libraryLength;
-  PlayerInitialize({
-    required this.defaultList,
-    required this.libraryLength
-  });
+  PlayerInitialize();
 }
 
+class PlayerDefaultPlaylist extends PlayerEvent {
+  final ConcatenatingAudioSource defaultList;
+  final int libraryLength;
+  PlayerDefaultPlaylist(
+      {required this.defaultList, required this.libraryLength});
+}
 
 class ChangePlaylist extends PlayerEvent {
   final ConcatenatingAudioSource playlist;
   final int songIndex;
-  ChangePlaylist({
-    required this.playlist,
-    required this.songIndex
-  });
+  ChangePlaylist({required this.playlist, required this.songIndex});
 }
-
 
 class AddToPlaylist extends PlayerEvent {
   final AudioSource audioSource;
@@ -31,5 +28,4 @@ class AddToPlaylist extends PlayerEvent {
   });
 }
 
-
-class ClearPlaylist extends PlayerEvent{}
+class ClearPlaylist extends PlayerEvent {}

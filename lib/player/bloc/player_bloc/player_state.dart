@@ -7,11 +7,8 @@ class PlayerState {
   final AndroidEqualizer? equalizer;
   final AndroidLoudnessEnhancer? loudnessEnhancer;
   final ConcatenatingAudioSource? playlist;
-  const PlayerState({
-     this.player,
-     this.playlist,
-     this.equalizer,this.loudnessEnhancer
-  });
+  const PlayerState(
+      {this.player, this.playlist, this.equalizer, this.loudnessEnhancer});
 
   // PlayerState copyWith({
   //   bool? nowPlaying,
@@ -23,22 +20,19 @@ class PlayerState {
   // }
 }
 
-class PlayerInitial extends PlayerState {
-}
+class PlayerInitial extends PlayerState {}
 
 class PlayerLoading extends PlayerState {
-  const PlayerLoading({
-    required super.player
-  });
+  const PlayerLoading({required super.player});
 }
 
 class PlayerLoaded extends PlayerState {
   // final AudioPlayer player;
-  const PlayerLoaded({
-    required super.player,
-    required super.playlist,
-    super.equalizer, super.loudnessEnhancer
-  });
+  const PlayerLoaded(
+      {required super.player,
+      required super.playlist,
+      super.equalizer,
+      super.loudnessEnhancer});
 }
 
 class PlayerError extends PlayerState {

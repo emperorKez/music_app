@@ -13,7 +13,7 @@ class LibraryState {
   //   this.genres,
   //   this.artists
   // });
- }
+}
 
 class LibraryInitial extends LibraryState {}
 
@@ -25,17 +25,16 @@ class LibraryLoaded extends LibraryState {
   final List<GenreModel> genres;
   final List<ArtistModel> artists;
   final List<PlaylistModel>? playlists;
- LibraryLoaded({
-    required this.songs,
-    required this.albums,
-    required this.genres,
-    required this.artists,
-    this.playlists
-  });
+  LibraryLoaded(
+      {required this.songs,
+      required this.albums,
+      required this.genres,
+      required this.artists,
+      this.playlists});
   // const LibraryLoaded({required super.songs, required super.albums});
 }
 
 class LibraryError extends LibraryState {
-   LibraryError({this.error = 'Something went wrong'});
+  LibraryError({this.error = 'Something went wrong'});
   final String error;
 }

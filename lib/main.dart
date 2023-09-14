@@ -1,5 +1,3 @@
-import 'package:audio_service/audio_service.dart';
-import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,12 +11,6 @@ import 'package:music_app/library/bloc/library_fetch_bloc/library_fetch_bloc.dar
 import 'package:music_app/library/bloc/search_bloc/search_bloc.dart';
 import 'package:music_app/library/repository/services.dart';
 import 'package:music_app/player/bloc/player_bloc/player_bloc.dart';
-
-import 'library/bloc/artwork_cubit/artwork_cubit.dart';
-
-// late AudioHandler audioHandler;
-// final equalizer = AndroidEqualizer();
-// final loudnessEnhancer = AndroidLoudnessEnhancer();
 
 final player = AudioPlayer();
 
@@ -39,13 +31,6 @@ Future<void> main() async {
   //   ),
   // );
 
-  final session = await AudioSession.instance;
-  await session.configure(const AudioSessionConfiguration.music());
-
-  // await DatabaseService().createDatabase();
-
-  // player = AudioPlayer();
-
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -64,7 +49,8 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => AppBloc(appRepo: AppRepository())),
         BlocProvider(
-          create: (context) => PlayerBloc()
+          create: (context) => PlayerBloc()..add(PlayerInitialize()),
+          lazy: false,
         ),
         BlocProvider(create: (context) => SearchBloc()),
         BlocProvider(
@@ -72,8 +58,8 @@ class MyApp extends StatelessWidget {
             ..add(FetchLibraryData()),
           lazy: false,
         ),
-        BlocProvider(
-            create: (context) => ArtworkCubit(repo: LibraryRepository())),
+        // BlocProvider(
+        //     create: (context) => ArtworkCubit(repo: LibraryRepository())),
       ],
       child: BlocBuilder<AppBloc, AppState>(
         builder: (context, state) {

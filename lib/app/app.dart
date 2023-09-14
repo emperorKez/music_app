@@ -1,4 +1,3 @@
-
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,35 +13,32 @@ class App extends StatefulWidget {
 }
 
 class AppState extends State<App> with WidgetsBindingObserver {
-
-
   final equalizer = AndroidEqualizer();
   final loudnessEnhancer = AndroidLoudnessEnhancer();
   // final _bassBoast = AndroidAudioEffect()
 
   late final player = AudioPlayer(
-    //   audioPipeline: AudioPipeline(androidAudioEffects: [equalizer,
-    // loudnessEnhancer,
-  // ])
-  );
+      //   audioPipeline: AudioPipeline(androidAudioEffects: [equalizer,
+      // loudnessEnhancer,
+      // ])
+      );
 
   // late AudioPlayer player;
 
   @override
-   initState() {
+  initState() {
     super.initState();
     ambiguate(WidgetsBinding.instance)!.addObserver(this);
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.black,
     ));
-       
 
-  //    player = AudioPlayer(
-  //     audioPipeline: AudioPipeline(androidAudioEffects: [equalizer,
-  //   loudnessEnhancer,
-  // ]));
+    //    player = AudioPlayer(
+    //     audioPipeline: AudioPipeline(androidAudioEffects: [equalizer,
+    //   loudnessEnhancer,
+    // ]));
 
-  _init();
+    _init();
   }
 
   Future<void> _init() async {
@@ -51,7 +47,6 @@ class AppState extends State<App> with WidgetsBindingObserver {
   }
 
   // Future<void> _init() async {
-    
 
   // //    player = AudioPlayer(
   // //     audioPipeline: AudioPipeline(androidAudioEffects: [
@@ -108,10 +103,8 @@ class AppState extends State<App> with WidgetsBindingObserver {
     }
   }
 
-
-
-    @override
+  @override
   Widget build(BuildContext context) {
-    return  const HomeScreen();
+    return const HomeScreen();
   }
 }

@@ -63,6 +63,4 @@ class NoMusicFound extends StatelessWidget {
           )),
     );
   }
-
-  
 }

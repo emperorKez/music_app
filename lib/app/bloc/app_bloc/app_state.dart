@@ -6,19 +6,18 @@ class AppState {
   final PackageInfo? packageInfo;
   final bool darkMode;
   final bool notification;
-  const AppState({this.packageInfo, this.darkMode = false, this.notification = true});
+  const AppState(
+      {this.packageInfo, this.darkMode = false, this.notification = true});
 
   AppState copyWith({
     Map<String, String>? loginPrefData,
-  PackageInfo? packageInfo,
-  bool isFirstRun = true,
-  }){
+    PackageInfo? packageInfo,
+    bool isFirstRun = true,
+  }) {
     return AppState(
       // loginData: loginPrefData ?? this.loginData,
       packageInfo: packageInfo ?? this.packageInfo,
       // darkMode: darkMode ?? this.darkMode
-
-
     );
   }
 }
@@ -28,10 +27,11 @@ class AppSettingsInitial extends AppState {}
 class AppSettingsLoading extends AppState {}
 
 class AppSettingsLoaded extends AppState {
-  const AppSettingsLoaded({required super.packageInfo, required super.darkMode});
+  const AppSettingsLoaded(
+      {required super.packageInfo, required super.darkMode});
 }
 
 class AppSettingsError extends AppState {
   final String error;
-  const AppSettingsError({this.error = 'Something went wrong'}); 
+  const AppSettingsError({this.error = 'Something went wrong'});
 }

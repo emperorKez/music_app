@@ -1,7 +1,6 @@
-class SongWidgets{
-
+class SongWidgets {
   // duration(int duration){
-  //   int munite = 
+  //   int munite =
   //   int songDuration =
   //                       Duration(seconds: state.songs![index].duration!).
   //                           ;

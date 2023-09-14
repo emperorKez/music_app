@@ -12,18 +12,19 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     on<SearchCanceled>(onSearchCanceled);
   }
 
-   Future<void> onSearchKeywordChanged(
+  Future<void> onSearchKeywordChanged(
       SearchKeywordChanged event, Emitter<SearchState> emit) async {
     emit(SearchLoading());
     try {
       final List<SongModel> songLibrary = event.songLibrary;
-       List<SongModel> data = [];
-      for (var song in songLibrary){
-        if (song.title.contains(event.keyword) || (song.artist != null && song.artist!.contains(event.keyword))){
+      List<SongModel> data = [];
+      for (var song in songLibrary) {
+        if (song.title.contains(event.keyword) ||
+            (song.artist != null && song.artist!.contains(event.keyword))) {
           data.add(song);
         }
       }
-      emit(SearchLoaded( songs: data, isSearching: true));
+      emit(SearchLoaded(songs: data, isSearching: true));
     } catch (e) {
       emit(SearchError(error: e.toString()));
     }

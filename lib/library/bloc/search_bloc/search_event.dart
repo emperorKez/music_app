@@ -7,8 +7,7 @@ class SearchKeywordChanged extends SearchEvent {
   final String keyword;
   final List<SongModel> songLibrary;
 
-   SearchKeywordChanged({this.keyword = '', required this.songLibrary});
+  SearchKeywordChanged({this.keyword = '', required this.songLibrary});
 }
 
 class SearchCanceled extends SearchEvent {}
-

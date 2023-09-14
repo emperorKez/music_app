@@ -5,7 +5,7 @@ class AppRepository {
   checkFirstRun() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-     bool isFirstRun = prefs.getBool('isFirstRun') ?? true;
+      bool isFirstRun = prefs.getBool('isFirstRun') ?? true;
       return isFirstRun;
     } catch (_) {}
   }
@@ -13,7 +13,7 @@ class AppRepository {
   setFirstRun() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-     prefs.setBool('isFirstRun', true);
+      prefs.setBool('isFirstRun', true);
     } catch (_) {}
   }
 
@@ -30,7 +30,7 @@ class AppRepository {
   setTheme(bool isDark) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-     prefs.setBool('darkMode', isDark);
+      prefs.setBool('darkMode', isDark);
       return isDark;
     } catch (e) {
       return false;

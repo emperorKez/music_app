@@ -25,35 +25,35 @@ class _SearchFormState extends State<SearchForm> {
           return Form(
             key: formKey,
             child: TextFormField(
-                keyboardType: TextInputType.text,
-                autofocus: false,
-                onChanged: (value) {
-                  context
-                      .read<SearchBloc>()
-                      .add(SearchKeywordChanged(songLibrary: state.songs));
-                },
-                decoration: const InputDecoration(
-                    isDense: true,
-                    filled: true,
-                    hintText: 'Search Songs, Playlists, artistes ...',
-                    hintStyle: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontStyle: FontStyle.italic,
-                    ),
-                    contentPadding: EdgeInsets.all(10),
-                    fillColor: Colors.grey,
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)))),
-                validator: (value) {
-                  return null;
-                
-                  // state.isValidKeyword == false
-                  //       
-                },
-                onEditingComplete: () => context
-                      .read<SearchBloc>()
-                      .add(SearchCanceled()),),
+              keyboardType: TextInputType.text,
+              autofocus: false,
+              onChanged: (value) {
+                context
+                    .read<SearchBloc>()
+                    .add(SearchKeywordChanged(songLibrary: state.songs));
+              },
+              decoration: const InputDecoration(
+                  isDense: true,
+                  filled: true,
+                  hintText: 'Search Songs, Playlists, artistes ...',
+                  hintStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                  ),
+                  contentPadding: EdgeInsets.all(10),
+                  fillColor: Colors.grey,
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)))),
+              validator: (value) {
+                return null;
+
+                // state.isValidKeyword == false
+                //
+              },
+              onEditingComplete: () =>
+                  context.read<SearchBloc>().add(SearchCanceled()),
+            ),
           );
         } else {
           return const Center(

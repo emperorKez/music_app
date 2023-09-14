@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:path_provider/path_provider.dart';
 
 class LibraryRepository {
   final OnAudioQuery audioQuery = OnAudioQuery();

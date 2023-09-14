@@ -77,21 +77,22 @@ class _MostPlayedSongsScreenState extends State<MostPlayedSongsScreen> {
                                   context.read<PlayerBloc>().add(ChangePlaylist(
                                       playlist: createNowPlaylist(songList),
                                       songIndex: index));
-                                       Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  NowPlayingScreen(
-                                                    player: context
-                                                          .read<PlayerBloc>()
-                                                          .state
-                                                          .player!,
-                                                      )));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              NowPlayingScreen(
+                                                player: context
+                                                    .read<PlayerBloc>()
+                                                    .state
+                                                    .player!,
+                                              )));
                                 },
                                 onLongPress: () {
-                      //Todo
-                      showOnPressedDialog(context: context, song: songList[index]);
-                    },
+                                  //Todo
+                                  showOnPressedDialog(
+                                      context: context, song: songList[index]);
+                                },
                                 leading: AspectRatio(
                                   aspectRatio: 1,
                                   child: ClipRRect(

@@ -15,10 +15,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-void showOnPressedDialog({
-  required BuildContext context,
-  required SongModel song
-}) {
+void showOnPressedDialog(
+    {required BuildContext context, required SongModel song}) {
   final deviceWidth = MediaQuery.of(context).size.width;
   final deviceHeight = MediaQuery.of(context).size.height;
   showDialog<void>(
@@ -29,19 +27,27 @@ void showOnPressedDialog({
         insetPadding: EdgeInsets.only(
             left: 50, right: 50, top: deviceHeight - 250, bottom: 30),
         // title: Text(title, textAlign: TextAlign.center),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ElevatedButton.icon(onPressed: () => deleteSong(context, song: song), icon: const Icon(Icons.playlist_add), label: const Text('Add To Playlist'),),
-            const SizedBox(height: 10,),
-            ElevatedButton.icon(onPressed: () => deleteSong(context, song: song), icon: const Icon(Icons.delete_forever), label: const Text('Delete Permanently'),)]
-        )),
+        content: Column(mainAxisSize: MainAxisSize.min, children: [
+          ElevatedButton.icon(
+            onPressed: () => deleteSong(context, song: song),
+            icon: const Icon(Icons.playlist_add),
+            label: const Text('Add To Playlist'),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          ElevatedButton.icon(
+            onPressed: () => deleteSong(context, song: song),
+            icon: const Icon(Icons.delete_forever),
+            label: const Text('Delete Permanently'),
+          )
+        ])),
   );
 }
 
 deleteSong(BuildContext context, {required SongModel song}) async {
   var deleteResponse = await confirmDelete(context);
-  if (deleteResponse){
+  if (deleteResponse) {
     File(song.data).delete(recursive: true);
   }
 }
@@ -52,8 +58,8 @@ confirmDelete(BuildContext context) {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Confirm Song Removal'),
-          content:
-              const Text('Are you sure you want to permanently delete this song from your device?'),
+          content: const Text(
+              'Are you sure you want to permanently delete this song from your device?'),
           actionsAlignment: MainAxisAlignment.spaceBetween,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

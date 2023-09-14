@@ -49,9 +49,12 @@ class EqualizerControls extends StatelessWidget {
     );
   }
 
-
-
-  Widget verticalSlider({required BuildContext context, required double value, double min = 0.0, double max = 1.0, ValueChanged<double>? onChanged}) {
+  Widget verticalSlider(
+      {required BuildContext context,
+      required double value,
+      double min = 0.0,
+      double max = 1.0,
+      ValueChanged<double>? onChanged}) {
     return FittedBox(
       fit: BoxFit.fitHeight,
       alignment: Alignment.bottomCenter,
@@ -71,5 +74,4 @@ class EqualizerControls extends StatelessWidget {
       ),
     );
   }
-
 }

@@ -22,10 +22,22 @@ class _ControlButtonsState extends State<ControlButtons> {
             stream: widget.player.loopModeStream,
             builder: (context, snapshot) {
               final loopMode = snapshot.data ?? LoopMode.off;
-            final icons = [
-                const Icon(Icons.repeat, color: Colors.grey,  size: 20,),
-                Icon(Icons.repeat, color: Theme.of(context).primaryColor,  size: 20,),
-                Icon(Icons.repeat_one, color: Theme.of(context).primaryColor,  size: 20,),
+              final icons = [
+                const Icon(
+                  Icons.repeat,
+                  color: Colors.grey,
+                  size: 20,
+                ),
+                Icon(
+                  Icons.repeat,
+                  color: Theme.of(context).primaryColor,
+                  size: 20,
+                ),
+                Icon(
+                  Icons.repeat_one,
+                  color: Theme.of(context).primaryColor,
+                  size: 20,
+                ),
               ];
               const cycleModes = [
                 LoopMode.off,
@@ -72,7 +84,7 @@ class _ControlButtonsState extends State<ControlButtons> {
                   processingState == ProcessingState.buffering) {
                 return IconButton(
                     iconSize: 50.0,
-                    onPressed: (){},
+                    onPressed: () {},
                     icon: Container(
                         padding: const EdgeInsets.all(10),
                         decoration: const BoxDecoration(
@@ -81,8 +93,7 @@ class _ControlButtonsState extends State<ControlButtons> {
                           Icons.play_arrow,
                           size: 32,
                           color: Colors.white,
-                        )
-                        ));
+                        )));
               } else if (playing != true) {
                 return IconButton(
                     iconSize: 50.0,
@@ -110,7 +121,7 @@ class _ControlButtonsState extends State<ControlButtons> {
                           size: 32,
                           color: Colors.white,
                         )));
-              } 
+              }
               // else if (processingState == ProcessingState.idle) {
               //   widget.player.play();
               //   return IconButton(
@@ -125,7 +136,7 @@ class _ControlButtonsState extends State<ControlButtons> {
               //       onPressed: widget.player.pause,
               //       color: Colors.white);
               // }
-               else {
+              else {
                 return IconButton(
                   onPressed: () => widget.player.seek(Duration.zero),
                   icon: Icon(
@@ -164,8 +175,16 @@ class _ControlButtonsState extends State<ControlButtons> {
                   await widget.player.setShuffleModeEnabled(enable);
                 },
                 icon: shuffleModeEnabled
-                    ? Icon(Icons.shuffle, color: Theme.of(context).primaryColor, size: 20,)
-                    : const Icon(Icons.shuffle, color: Colors.grey, size: 20,),
+                    ? Icon(
+                        Icons.shuffle,
+                        color: Theme.of(context).primaryColor,
+                        size: 20,
+                      )
+                    : const Icon(
+                        Icons.shuffle,
+                        color: Colors.grey,
+                        size: 20,
+                      ),
               );
             },
           ),

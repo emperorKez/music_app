@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:music_app/app/view/widget/data.dart';
 
-
 class PlaylistScreen1 extends StatelessWidget {
   const PlaylistScreen1(
-      {required this.playlistTitle, this.playlistArtwork,required this.player, super.key});
+      {required this.playlistTitle,
+      this.playlistArtwork,
+      required this.player,
+      super.key});
   final String? playlistArtwork;
   final String playlistTitle;
   final AudioPlayer player;
