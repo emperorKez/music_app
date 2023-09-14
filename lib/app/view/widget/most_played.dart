@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:music_app/library/bloc/library_fetch_bloc/library_fetch_bloc.dart';
 import 'package:music_app/library/repository/database.dart';
 import 'package:music_app/library/view/widget/library_widgets.dart';
+import 'package:music_app/library/view/widget/show_dialog.dart';
 import 'package:music_app/player/bloc/player_bloc/player_bloc.dart';
 import 'package:music_app/player/screen/now_playing.dart';
 import 'package:music_app/player/utils/common.dart';
@@ -72,18 +73,25 @@ class _MostPlayedSongsScreenState extends State<MostPlayedSongsScreen> {
                                           e.id ==
                                           snapshot.data![index].songId)]);
                               return ListTile(
-                                onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => NowPlayingScreen(
-                                              player: context
-                                                  .read<PlayerBloc>()
-                                                  .state
-                                                  .player!,
-                                              playlist:
-                                                  createNowPlaylist(songList),
-                                              songIndex: index,
-                                            ))),
+                                onTap: () {
+                                  context.read<PlayerBloc>().add(ChangePlaylist(
+                                      playlist: createNowPlaylist(songList),
+                                      songIndex: index));
+                                       Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  NowPlayingScreen(
+                                                    player: context
+                                                          .read<PlayerBloc>()
+                                                          .state
+                                                          .player!,
+                                                      )));
+                                },
+                                onLongPress: () {
+                      //Todo
+                      showOnPressedDialog(context: context, song: songList[index]);
+                    },
                                 leading: AspectRatio(
                                   aspectRatio: 1,
                                   child: ClipRRect(
@@ -107,6 +115,10 @@ class _MostPlayedSongsScreenState extends State<MostPlayedSongsScreen> {
                                 trailing: durationWidget(
                                     context: context,
                                     duration: songList[index].duration!),
+                                contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 0),
+                                horizontalTitleGap: 10,
+                                minVerticalPadding: 0,
                               );
                             })
                       ]);

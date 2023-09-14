@@ -1,5 +1,7 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:music_app/app/view/screen/all_playlist.dart';
 import 'package:music_app/app/view/screen/playlist_songs.dart';
 import 'package:music_app/app/view/widget/error_snackbar.dart';
@@ -10,7 +12,8 @@ import 'package:music_app/library/view/screen/all_genre.dart';
 import 'package:music_app/library/view/screen/genre_screen.dart';
 import 'package:music_app/library/view/screen/all_songs.dart';
 import 'package:music_app/library/view/widget/library_widgets.dart';
-import 'package:music_app/player/bloc/player_bloc/player_bloc.dart';
+import 'package:music_app/library/view/widget/show_dialog.dart';
+import 'package:music_app/player/bloc/player_bloc/player_bloc.dart' as blocs;
 import 'package:music_app/player/screen/now_playing.dart';
 import 'package:music_app/player/utils/common.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -25,6 +28,21 @@ topContainer() {
     builder: (context, state) {
       if (state is LibraryLoaded) {
         context.read<ArtworkCubit>().saveArtworkToFile(songs: state.songs);
+
+        //default playlist
+        ConcatenatingAudioSource defaultList = ConcatenatingAudioSource(
+            children: List.generate(state.songs.length, (index) {
+          return AudioSource.file(state.songs[index].data,
+              tag: MediaItem(
+                id: '${state.songs[index].id}',
+                album: state.songs[index].album!,
+                artist: state.songs[index].artist!,
+                title: state.songs[index].title,
+              ));
+        }));
+        context.read<blocs.PlayerBloc>().add(blocs.PlayerInitialize(
+            defaultList: defaultList, libraryLength: state.songs.length));
+
         // final PlaylistModel emptyPlaylist;
         return GridView.count(
           shrinkWrap: true,
@@ -131,7 +149,7 @@ topContainerItems(BuildContext context,
 //         } else if (state is LibraryLoaded) {
 //           // if (audioList.isEmpty) {
 //           return const SizedBox();
-          
+
 //         } else {
 //           return const Center(
 //             child: CircularProgressIndicator(),
@@ -190,15 +208,24 @@ Widget recentlyAdded() {
                 itemCount: songList.length > 10 ? 10 : songList.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => NowPlayingScreen(
-                                  player:
-                                      context.read<PlayerBloc>().state.player!,
-                                  playlist: createNowPlaylist(songList),
-                                  songIndex: index,
-                                ))),
+                    onTap: () {
+                      context.read<blocs.PlayerBloc>().add(blocs.ChangePlaylist(
+                          playlist: createNowPlaylist(songList),
+                          songIndex: index));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => NowPlayingScreen(
+                                    player: context
+                                        .read<blocs.PlayerBloc>()
+                                        .state
+                                        .player!,
+                                  )));
+                    },
+                    onLongPress: () {
+                      //Todo
+                      showOnPressedDialog(context: context, song: songList[index]);
+                    },
                     leading: AspectRatio(
                       aspectRatio: 1,
                       child: ClipRRect(
@@ -221,6 +248,9 @@ Widget recentlyAdded() {
                     ),
                     trailing: durationWidget(
                         context: context, duration: songList[index].duration!),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+                    horizontalTitleGap: 10,
+                    minVerticalPadding: 0,
                   );
                 }),
           ],

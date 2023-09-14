@@ -1,12 +1,13 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:music_app/app/view/screen/home_screen.dart';
 import 'package:music_app/library/bloc/library_fetch_bloc/library_fetch_bloc.dart';
 import 'package:music_app/library/repository/database.dart';
+import 'package:music_app/player/bloc/player_bloc/player_bloc.dart' as blocs;
 // import 'package:music_app/main.dart';
 import 'package:music_app/player/utils/common.dart';
 import 'package:music_app/player/utils/control_button.dart';
@@ -16,10 +17,7 @@ import 'package:rxdart/rxdart.dart';
 import '../widget/enhancement_control.dart';
 
 class NowPlayingScreen extends StatefulWidget {
-  const NowPlayingScreen(
-      {required this.player, this.playlist, this.songIndex, super.key});
-  final ConcatenatingAudioSource? playlist;
-  final int? songIndex;
+  const NowPlayingScreen({required this.player, super.key});
   final AudioPlayer player;
 
   @override
@@ -80,46 +78,25 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
         .listen((event) {}, onError: (Object e, StackTrace stackTrace) {});
     // Try to load audio from a source and catch any errors.
     try {
-      // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
+      widget.player.play();
 
-      await widget.player.setAudioSource(
-          widget.playlist ?? AudioSource.asset('assets/songs/default.mp3', tag: const MediaItem(
-            id: 'default',
-            album: 'default',
-            artist: 'default',
-            title: 'default',
-            )),
-          initialIndex: widget.songIndex);
+      // if (
+      //   // widget.player.playing == false &&
+      //  widget.player.playerState.processingState == ProcessingState.idle) {
 
-      if (widget.playlist != null) {
-        widget.player.play();
-      }
+      //   await widget.player.setAudioSource( defaultPlaylist(),
 
-      // await player.setAudioSource(
-      //     widget.playlist ?? AudioSource.asset('assets/songs/default.mp3'),
-      //     initialIndex: widget.songIndex);
-
-      // player.play();
-
-      // await audioHandler.addQueueItems(widget.playlist)
-
-      // AudioSource.
-      //   file(widget.song.data));
-      // uri(Uri.parse(
-      //     "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3")));
+      //       initialIndex: widget.songIndex);
+      // } else if (
+      //   // widget.player.playing == true
+      //   widget.player.playerState.processingState == ProcessingState.idle
+      //   && widget.playlist != null) {
+      //   widget.player.stop();
+      //   await widget.player
+      //       .setAudioSource(widget.playlist!, initialIndex: widget.songIndex);
+      //   widget.player.play();
+      // }
     } catch (_) {}
-
-    // Show a snackbar whenever reaching the end of an item in the playlist.
-    // player.positionDiscontinuityStream.listen((discontinuity) {
-    //   if (discontinuity.reason == PositionDiscontinuityReason.autoAdvance) {
-    //     showItemFinished(discontinuity.previousEvent.currentIndex);
-    //   }
-    // });
-    // player.processingStateStream.listen((state) {
-    //   if (state == ProcessingState.completed) {
-    //     showItemFinished(player.currentIndex);
-    //   }
-    // });
   }
 
   // @override
@@ -140,6 +117,9 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
   //     widget.player.stop();
   //   }
   // }
+
+  @override
+  void didChangeDependencies() {}
 
   /// Collects the data useful for displaying in a seek bar, using a handy
   /// feature of rx_dart to combine the 3 streams of interest into one.
@@ -166,84 +146,114 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
                     Icons.arrow_back_ios_new,
                     color: Colors.white,
                   )),
-              // actions: [
-              //   IconButton(
-              //       onPressed: () {
-              //         Navigator.push(
-              //             context,
-              //             MaterialPageRoute(
-              //                 builder: (context) => SongListScreen()));
-              //       },
-              //       icon: const Icon(
-              //         Icons.more_horiz,
-              //         color: Colors.white,
-              //       ))
-              // ],
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const HomeScreen()));
+                    },
+                    icon: const Icon(
+                      Icons.more_horiz,
+                      color: Colors.white,
+                    ))
+              ],
             ),
             body: body()));
   }
 
   Widget body() {
-    return StreamBuilder<SequenceState?>(
-        stream: widget.player.sequenceStateStream,
-        builder: (context, snapshot) {
-          final state = snapshot.data;
-          if (state?.sequence.isEmpty ?? true) {
-            return const SizedBox();
-          }
+    return BlocBuilder<blocs.PlayerBloc, blocs.PlayerState>(
+      builder: (context, state) {
+        if (state is blocs.PlayerLoaded) {
+          final AudioPlayer player = state.player!;
 
-          final metadata = state!.currentSource!.tag as MediaItem;
-         
+          return StreamBuilder<SequenceState?>(
+              stream: state.player!.sequenceStateStream,
+              builder: (context, snapshot) {
+                final state = snapshot.data;
+                if (state?.sequence.isEmpty ?? true) {
+                  return const SizedBox();
+                }
 
-          // count song as played
-          if (widget.playlist != null){
-          DatabaseProvider().updatePlayedCount(songId: int.parse(metadata.id));
-          }
+                final metadata = state!.currentSource!.tag as MediaItem;
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: artworkWidget(
-                            audioId: int.parse(metadata.id),
-                            artworkType: ArtworkType.AUDIO)),
+                // count song as played
+                DatabaseProvider()
+                    .updatePlayedCount(songId: int.parse(metadata.id));
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: artworkWidget(
+                                  audioId: int.parse(metadata.id),
+                                  artworkType: ArtworkType.AUDIO)),
+                        ),
+                      ),
+
+                      //const Spacer(),
+                      // widget.player.playerState.processingState != ProcessingState.idle ?
+                      songDetail(metadata),
+                      // : const SizedBox(),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      // widget.player.playerState.processingState == ProcessingState.idle ?
+                      BlocBuilder<LibraryBloc, LibraryState>(
+                        builder: (context, state) {
+                          if (state is LibraryLoaded) {
+                            // print('playlist length =   ${widget.playlist?.length}');
+
+                            // if(widget.player.playerState.processingState != ProcessingState.idle){
+                            // print(state.songs[state.songs.indexWhere(
+                            //             (e) => e.id == int.parse(metadata.id))]);
+                            // }
+
+                            print('metadata Id = ${metadata.id}');
+                            print('metadata Title = ${metadata.title}');
+                            print('metadata Artist = ${metadata.artist}');
+
+                            return EnhancementControl(
+                              player: player,
+                              // song: widget.playlist != null
+                              //     ? state.songs[state.songs.indexWhere(
+                              //         (e) => e.id == int.parse(metadata.id))]
+                              //     : null
+                            );
+                          } else {
+                            return const CircularProgressIndicator();
+                          }
+                        },
+                      ),
+                      // : const SizedBox(),
+                      songProgressBar(player),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      ControlButtons(player: player)
+                    ],
                   ),
-                ),
-
-                //const Spacer(),
-                songDetail(metadata),
-                const SizedBox(
-                  height: 10,
-                ),
-                BlocBuilder<LibraryBloc, LibraryState>(
-                  builder: (context, state) {
-                    if (state is LibraryLoaded) {
-                      return EnhancementControl(
-                          player: widget.player,
-                          song: state.songs[int.parse(metadata.id)]);
-                    } else {
-                      return const CircularProgressIndicator();
-                    }
-                  },
-                ),
-                songProgressBar(widget.player),
-                const SizedBox(
-                  height: 20,
-                ),
-                ControlButtons(player: widget.player)
-              ],
-            ),
+                );
+              });
+        } else if (state is blocs.PlayerError) {
+          return Text(state.err);
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(),
           );
-        });
+        }
+      },
+    );
   }
-
 
   Widget songDetail(MediaItem metadata) {
     return Column(
@@ -267,7 +277,6 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
       ],
     );
   }
-
 
   // Widget player() {
   //   return Container(
@@ -304,7 +313,6 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
   //   );
   // }
 
-
   Widget songProgressBar(AudioPlayer player) {
     // Display seek bar. Using StreamBuilder, this widget rebuilds
     // each time the position, buffered position or duration changes.
@@ -321,7 +329,6 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
       },
     );
   }
-  
 
   // void showItemFinished(int? index) {
   //   if (index == null) return;

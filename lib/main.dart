@@ -64,8 +64,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => AppBloc(appRepo: AppRepository())),
         BlocProvider(
-          create: (context) => PlayerBloc()..add(PlayerInitialize()),
-          lazy: false,
+          create: (context) => PlayerBloc()
         ),
         BlocProvider(create: (context) => SearchBloc()),
         BlocProvider(
@@ -73,13 +72,14 @@ class MyApp extends StatelessWidget {
             ..add(FetchLibraryData()),
           lazy: false,
         ),
-        BlocProvider(create: (context) => ArtworkCubit(repo: LibraryRepository())),
+        BlocProvider(
+            create: (context) => ArtworkCubit(repo: LibraryRepository())),
       ],
       child: BlocBuilder<AppBloc, AppState>(
         builder: (context, state) {
           return MaterialApp(
             title: 'Music App',
-            theme: state.darkMode == true ? ThemeData.dark(useMaterial3: true) : ThemeData.light(useMaterial3: true),
+            theme: state.darkMode == true ? darkTheme : lightTheme,
             debugShowCheckedModeBanner: false,
             home: const HomeScreen(),
           );

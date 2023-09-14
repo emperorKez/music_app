@@ -164,7 +164,8 @@ class _ArtistScreenState extends State<ArtistScreen> {
         const SizedBox(
           height: 15,
         ),
-        isGridView == true ? gridViewWidget(songs) : listViewWidget(songs)
+        isGridView == true ? 
+        gridViewWidget(songs) : listViewWidget(songs)
       ],
     );
   }
@@ -180,14 +181,13 @@ class _ArtistScreenState extends State<ArtistScreen> {
             childAspectRatio: 0.75),
         itemBuilder: (context, index) {
           return GestureDetector(
-            onTap: () => Navigator.push(
+            onTap: () {
+              context.read<PlayerBloc>().add(ChangePlaylist(playlist: createNowPlaylist(audioList), songIndex: index));
+               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => NowPlayingScreen(
-                          player: player,
-                          playlist: createNowPlaylist(audioList),
-                          songIndex: index,
-                        ))),
+                    builder: (context) =>
+               NowPlayingScreen(player: context.read<PlayerBloc>().state.player!,)));},
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -232,14 +232,14 @@ class _ArtistScreenState extends State<ArtistScreen> {
         shrinkWrap: true,
         itemBuilder: (context, index) {
           return ListTile(
-            onTap: () => Navigator.push(
+            onTap: () {
+              context.read<PlayerBloc>().add(ChangePlaylist(playlist: createNowPlaylist(audioList), songIndex: index));
+               Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => NowPlayingScreen(
-                          player: player,
-                          playlist: createNowPlaylist(audioList),
-                          songIndex: index,
-                        ))),
+                          player: context.read<PlayerBloc>().state.player!,
+                        )));},
             leading: AspectRatio(
               aspectRatio: 1,
               child: ClipRRect(

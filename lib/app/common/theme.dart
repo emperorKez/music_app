@@ -26,5 +26,5 @@ ThemeData lightTheme = ThemeData(
       );
 
 
-ThemeData darkTheme = ThemeData(
+ThemeData darkTheme = ThemeData.dark(
         useMaterial3: true,);

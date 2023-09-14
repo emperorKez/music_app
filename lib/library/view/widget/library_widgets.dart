@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:music_app/library/repository/services.dart';
+import 'package:music_app/library/view/widget/show_dialog.dart';
 import 'package:music_app/player/screen/now_playing.dart';
 import 'package:music_app/player/utils/common.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -20,19 +20,17 @@ Widget durationWidget({required BuildContext context, required int duration}) {
 }
 
 createNowPlaylist(List<SongModel> songList) {
- 
-
   return ConcatenatingAudioSource(
-      children: List.generate(songList.length, (index)  {
+      children: List.generate(songList.length, (index) {
     return AudioSource.file(songList[index].data,
         tag: MediaItem(
-            id: '${songList[index].id}',
-            album: songList[index].album!,
-            artist: songList[index].artist!,
-            title: songList[index].title,
-            //  artUri: Uri.dataFromBytes(LibraryRepository().fetchArtwork(songList[index].id) )
-            //  artUri: Uri.
-            ));
+          id: '${songList[index].id}',
+          album: songList[index].album!,
+          artist: songList[index].artist!,
+          title: songList[index].title,
+          //  artUri: Uri.dataFromBytes(LibraryRepository().fetchArtwork(songList[index].id) )
+          //  artUri: Uri.
+        ));
   }));
 }
 
@@ -46,14 +44,16 @@ Widget gridViewWidget(List<SongModel> songList) {
           childAspectRatio: 0.75),
       itemBuilder: (context, index) {
         return GestureDetector(
-          onTap: () => Navigator.push(
+          onTap: () {
+              context.read<PlayerBloc>().add(ChangePlaylist(playlist: createNowPlaylist(songList), songIndex: index));
+               Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => NowPlayingScreen(
-                        player: context.read<PlayerBloc>().state.player!,
-                        playlist: createNowPlaylist(songList),
-                        songIndex: index,
-                      ))),
+                  builder: (context) => NowPlayingScreen(player: context.read<PlayerBloc>().state.player!,)));},
+                  onLongPress: () {
+                      //Todo
+                      showOnPressedDialog(context: context, song: songList[index]);
+                    },
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,20 +100,21 @@ Widget gridViewWidget(List<SongModel> songList) {
 
 Widget listViewWidget(List<SongModel> songList) {
   return ListView.builder(
-    padding: const EdgeInsets.symmetric(horizontal: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       itemCount: songList.length,
       itemBuilder: (context, index) {
         return ListTile(
           onTap: () {
+            context.read<PlayerBloc>().add(ChangePlaylist(playlist: createNowPlaylist(songList), songIndex: index));
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => NowPlayingScreen(
-                          player: context.read<PlayerBloc>().state.player!,
-                          playlist: createNowPlaylist(songList),
-                          songIndex: index,
-                        )));
+                    builder: (context) => NowPlayingScreen(player: context.read<PlayerBloc>().state.player!,)));
           },
+          onLongPress: () {
+                      //Todo
+                      showOnPressedDialog(context: context, song: songList[index]);
+                    },
           leading: AspectRatio(
             aspectRatio: 1,
             child: ClipRRect(
@@ -136,6 +137,9 @@ Widget listViewWidget(List<SongModel> songList) {
           ),
           trailing: durationWidget(
               context: context, duration: songList[index].duration!),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+          horizontalTitleGap: 10,
+          minVerticalPadding: 0,
         );
       });
 }

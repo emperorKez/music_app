@@ -14,10 +14,10 @@ class EnhancementControl extends StatelessWidget {
     required this.player,
     // required this.equalizer,
     // required this.loudnessEnhancer,
-    required this.song
+     this.song
   }) : super(key: key);
   final AudioPlayer player;
-  final SongModel song;
+  final SongModel? song;
   // final AndroidEqualizer equalizer;
   // final AndroidLoudnessEnhancer loudnessEnhancer;
 
@@ -28,7 +28,7 @@ class EnhancementControl extends StatelessWidget {
         _volumeSlider(context: context),
         _equalizer(context),
         const Spacer(),
-        _addToPlaylist(context, songId: song.id),
+        song != null ? _addToPlaylist(context, songId: song!.id) : const SizedBox(),
         _speedSlider()
       ],
     );

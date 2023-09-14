@@ -22,10 +22,10 @@ class _ControlButtonsState extends State<ControlButtons> {
             stream: widget.player.loopModeStream,
             builder: (context, snapshot) {
               final loopMode = snapshot.data ?? LoopMode.off;
-              const icons = [
-                Icon(Icons.repeat, color: Colors.grey,  size: 20,),
-                Icon(Icons.repeat, color: Colors.orange,  size: 20,),
-                Icon(Icons.repeat_one, color: Colors.orange,  size: 20,),
+            final icons = [
+                const Icon(Icons.repeat, color: Colors.grey,  size: 20,),
+                Icon(Icons.repeat, color: Theme.of(context).primaryColor,  size: 20,),
+                Icon(Icons.repeat_one, color: Theme.of(context).primaryColor,  size: 20,),
               ];
               const cycleModes = [
                 LoopMode.off,
@@ -49,10 +49,10 @@ class _ControlButtonsState extends State<ControlButtons> {
               onPressed: widget.player.hasPrevious
                   ? widget.player.seekToPrevious
                   : null,
-              icon: const Icon(
+              icon: Icon(
                 Icons.skip_previous,
                 size: 24,
-                color: Colors.white,
+                color: Theme.of(context).primaryColor,
               ),
             ),
           ),
@@ -128,10 +128,10 @@ class _ControlButtonsState extends State<ControlButtons> {
                else {
                 return IconButton(
                   onPressed: () => widget.player.seek(Duration.zero),
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.replay,
                     size: 32,
-                    color: Colors.white,
+                    color: Theme.of(context).primaryColor,
                   ),
                 );
               }
@@ -143,10 +143,10 @@ class _ControlButtonsState extends State<ControlButtons> {
             builder: (context, snapshot) => IconButton(
               onPressed:
                   widget.player.hasNext ? widget.player.seekToNext : null,
-              icon: const Icon(
+              icon: Icon(
                 Icons.skip_next,
                 size: 24,
-                color: Colors.white,
+                color: Theme.of(context).primaryColor,
               ),
             ),
           ),
@@ -164,7 +164,7 @@ class _ControlButtonsState extends State<ControlButtons> {
                   await widget.player.setShuffleModeEnabled(enable);
                 },
                 icon: shuffleModeEnabled
-                    ? const Icon(Icons.shuffle, color: Colors.orange, size: 20,)
+                    ? Icon(Icons.shuffle, color: Theme.of(context).primaryColor, size: 20,)
                     : const Icon(Icons.shuffle, color: Colors.grey, size: 20,),
               );
             },

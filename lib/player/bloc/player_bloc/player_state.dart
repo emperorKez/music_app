@@ -4,36 +4,46 @@ part of 'player_bloc.dart';
 @immutable
 class PlayerState {
   final AudioPlayer? player;
-  final bool nowPlaying;
   final AndroidEqualizer? equalizer;
   final AndroidLoudnessEnhancer? loudnessEnhancer;
+  final ConcatenatingAudioSource? playlist;
   const PlayerState({
-    this.nowPlaying = false,
      this.player,
+     this.playlist,
      this.equalizer,this.loudnessEnhancer
   });
 
-  PlayerState copyWith({
-    bool? nowPlaying,
-    AudioPlayer? player
-  }) {
-    return PlayerState(
-      nowPlaying: nowPlaying ?? this.nowPlaying,
-      player: player ?? this.player
-    );
-  }
+  // PlayerState copyWith({
+  //   bool? nowPlaying,
+  //   AudioPlayer? player
+  // }) {
+  //   return PlayerState(
+  //     player: player ?? this.player
+  //   );
+  // }
 }
 
 class PlayerInitial extends PlayerState {
 }
 
 class PlayerLoading extends PlayerState {
+  const PlayerLoading({
+    required super.player
+  });
 }
 
 class PlayerLoaded extends PlayerState {
   // final AudioPlayer player;
   const PlayerLoaded({
     required super.player,
-    required super.nowPlaying, super.equalizer, super.loudnessEnhancer
+    required super.playlist,
+    super.equalizer, super.loudnessEnhancer
+  });
+}
+
+class PlayerError extends PlayerState {
+  final String err;
+  const PlayerError({
+    required this.err,
   });
 }

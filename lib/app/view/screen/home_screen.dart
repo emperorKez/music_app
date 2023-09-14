@@ -58,15 +58,15 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(
             height: 20,
           ),
-          genreContainer(),
+          // genreContainer(),
           // const SizedBox(
-          //   height: 20,
+          //   height: 20, 
           // ),
           // const FavoriteSongsContainer(),
           const SizedBox(
             height: 20,
           ),
-          const MostPlayedSongsScreen(),
+          // const MostPlayedSongsScreen(),
           const SizedBox(
             height: 20,
           ),
