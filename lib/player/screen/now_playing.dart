@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -189,19 +192,21 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: AspectRatio(
+                      const SizedBox(height: 10,),
+                      // Expanded(
+                        // child: 
+                        AspectRatio(
                           aspectRatio: 1,
                           child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: artworkWidget(
                                   audioId: int.parse(metadata.id),
-                                  artworkType: ArtworkType.AUDIO)),
+                                  artworkType: ArtworkType.AUDIO)
+                                  ),
                         ),
-                      ),
+                      // ),
 
-                      //const Spacer(),
-                      // widget.player.playerState.processingState != ProcessingState.idle ?
+                      
                       songDetail(metadata),
                       // : const SizedBox(),
                       const SizedBox(
@@ -224,10 +229,8 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
 
                             return EnhancementControl(
                               player: player,
-                              // song: widget.playlist != null
-                              //     ? state.songs[state.songs.indexWhere(
-                              //         (e) => e.id == int.parse(metadata.id))]
-                              //     : null
+                              song: state.songs[state.songs.indexWhere(
+                                      (e) => e.id == int.parse(metadata.id))]
                             );
                           } else {
                             return const CircularProgressIndicator();
@@ -260,17 +263,20 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AnimatedTextKit(
-            repeatForever: true,
-            pause: Duration.zero,
-            animatedTexts: [
-              TyperAnimatedText(
-                metadata.title,
-                speed: const Duration(milliseconds: 250),
-                curve: Curves.linear,
-                textStyle: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ]),
+        Text(metadata.title, 
+        style: Theme.of(context).textTheme.bodyMedium, 
+        ).animate().moveX() ,
+        // AnimatedTextKit(
+        //     repeatForever: true,
+        //     pause: Duration.zero,
+        //     animatedTexts: [
+        //       TyperAnimatedText(
+        //         metadata.title,
+        //         speed: const Duration(milliseconds: 250),
+        //         curve: Curves.linear,
+        //         textStyle: Theme.of(context).textTheme.bodyMedium,
+        //       ),
+        //     ]),
         Text(metadata.artist!,
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.bodySmall)

@@ -6,8 +6,12 @@ class AppState {
   final PackageInfo? packageInfo;
   final bool darkMode;
   final bool notification;
+  final String? appDocRoot;
   const AppState(
-      {this.packageInfo, this.darkMode = false, this.notification = true});
+      {this.packageInfo,
+      this.darkMode = false,
+      this.notification = true,
+      this.appDocRoot});
 
   AppState copyWith({
     Map<String, String>? loginPrefData,
@@ -28,7 +32,7 @@ class AppSettingsLoading extends AppState {}
 
 class AppSettingsLoaded extends AppState {
   const AppSettingsLoaded(
-      {required super.packageInfo, required super.darkMode});
+      {required super.packageInfo, required super.darkMode, super.appDocRoot});
 }
 
 class AppSettingsError extends AppState {

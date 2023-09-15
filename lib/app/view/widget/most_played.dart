@@ -51,7 +51,7 @@ class _MostPlayedSongsScreenState extends State<MostPlayedSongsScreen> {
                                 horizontal: 5, vertical: 15),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
-                              color: Theme.of(context).colorScheme.secondary,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                             child: const Text('Top Played')),
                         const SizedBox(
@@ -75,7 +75,8 @@ class _MostPlayedSongsScreenState extends State<MostPlayedSongsScreen> {
                               return ListTile(
                                 onTap: () {
                                   context.read<PlayerBloc>().add(ChangePlaylist(
-                                      playlist: createNowPlaylist(songList),
+                                      playlist: createNowPlaylist(
+                                          songList: songList, context: context),
                                       songIndex: index));
                                   Navigator.push(
                                       context,

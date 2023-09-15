@@ -39,20 +39,24 @@ class PlaylistScreen extends StatelessWidget {
                   child: Text('You have no Playlist'),
                 )
               : GridView.builder(
+                  itemCount: state.playlists!.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      mainAxisSpacing: 15,
-                      crossAxisSpacing: 15,
-                      childAspectRatio: 0.8),
+                      mainAxisSpacing: 20,
+                      crossAxisSpacing: 20,
+                      childAspectRatio: 1),
                   itemBuilder: (context, index) {
                     return GestureDetector(
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => PlaylistSongScreen(
-                                    playlist: state.playlists![index],
-                                    songList: const [],
-                                  ))),
+                      onTap: () {
+                        print(state.playlists![index].data);
+                        //  Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //       builder: (context) => PlaylistSongScreen(
+                        //             playlist: state.playlists![index],
+                        //             songList: const [],
+                        //           )));
+                      },
                       child: Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(

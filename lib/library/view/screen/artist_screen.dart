@@ -182,7 +182,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
           return GestureDetector(
             onTap: () {
               context.read<PlayerBloc>().add(ChangePlaylist(
-                  playlist: createNowPlaylist(audioList), songIndex: index));
+                  playlist: createNowPlaylist(songList: audioList, context: context), songIndex: index));
               Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -236,7 +236,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
           return ListTile(
             onTap: () {
               context.read<PlayerBloc>().add(ChangePlaylist(
-                  playlist: createNowPlaylist(audioList), songIndex: index));
+                  playlist: createNowPlaylist(songList: audioList, context: context), songIndex: index));
               Navigator.push(
                   context,
                   MaterialPageRoute(

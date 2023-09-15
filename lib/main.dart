@@ -1,8 +1,10 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:music_app/app/app.dart';
 import 'package:music_app/app/bloc/app_bloc/app_bloc.dart';
 import 'package:music_app/app/common/theme.dart';
 import 'package:music_app/app/repository/app_repo.dart';
@@ -20,6 +22,8 @@ Future<void> main() async {
     androidNotificationChannelName: 'Music playback',
     androidNotificationOngoing: true,
   );
+
+  await createDefaultArtwork();
 
   // _audioHandler = await AudioService.init(
   //   builder: () => AudioPlayerHandler(),
@@ -47,7 +51,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => AppBloc(appRepo: AppRepository())),
+        BlocProvider(create: (context) => AppBloc(appRepo: AppRepository()) ..add(GetAppSettings()), lazy: false,),
         BlocProvider(
           create: (context) => PlayerBloc()..add(PlayerInitialize()),
           lazy: false,

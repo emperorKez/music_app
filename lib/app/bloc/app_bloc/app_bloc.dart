@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:music_app/app/repository/app_repo.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path_provider/path_provider.dart';
 
 part 'app_event.dart';
 part 'app_state.dart';
@@ -19,7 +22,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     try {
       var packageInfoData = await appRepo.getAppVersionInfo();
       bool darkMode = await appRepo.getTheme();
-      emit(AppSettingsLoaded(packageInfo: packageInfoData, darkMode: darkMode));
+      final Directory dir = await getApplicationDocumentsDirectory();
+      emit(AppSettingsLoaded(
+          packageInfo: packageInfoData,
+          darkMode: darkMode,
+          appDocRoot: dir.path));
     } catch (e) {
       emit(AppSettingsError(error: e.toString()));
     }

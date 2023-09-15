@@ -21,7 +21,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       for (var song in songLibrary) {
         if (song.title.contains(event.keyword) ||
             (song.artist != null && song.artist!.contains(event.keyword))) {
-          data.add(song);
+          data.add(song); 
+          print('this is the keyword: ${event.keyword}');
+          print(data);
         }
       }
       emit(SearchLoaded(songs: data, isSearching: true));

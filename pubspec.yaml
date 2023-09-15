@@ -61,6 +61,8 @@ dependencies:
   #content_resolver:
   sqflite:
   path:
+  flutter_animate:
+  flex_color_scheme:
 
 
   # The following adds the Cupertino Icons font to your application.

@@ -15,23 +15,23 @@
 //   saveArtworkToFile({required List<SongModel> songs}) async {
 //     List<ArtworkFile> artworkList = [];
 //     Directory dir = await getApplicationDocumentsDirectory();
-//     // getApplicationCacheDirectory();
+    // getApplicationCacheDirectory();
 
-//     // await File(path).create(recursive: true, exclusive: false);
+    // await File(path).create(recursive: true, exclusive: false);
 
-//     // for (var song in songs) {
-//     //   // // if(
+    // for (var song in songs) {
+    //   // // if(
 
-//     //   // print(dir);
-//     //   // print(await Directory('${dir.path}').exists());
+    //   // print(dir);
+    //   // print(await Directory('${dir.path}').exists());
 
-//     //   if (await File('${dir.path}/default.png').exists()
-//     //       // await Directory('${dir.path}/default.png').exists() == false
-//     //       ) {
-//     //     String imageFile = Directory('${dir.path}/default.png').path;
-//     //     //  print(imageFile);
-//     //     // var pf =
-//     //     //     await File(imageFile).create(recursive: true, exclusive: false);
+    //   if (await File('${dir.path}/default.png').exists()
+    //       // await Directory('${dir.path}/default.png').exists() == false
+    //       ) {
+    //     String imageFile = Directory('${dir.path}/default.png').path;
+    //     //  print(imageFile);
+    //     // var pf =
+    //     //     await File(imageFile).create(recursive: true, exclusive: false);
 
         
 //     //   } else {

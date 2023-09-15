@@ -2,6 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:music_app/app/bloc/app_bloc/app_bloc.dart';
 import 'package:music_app/app/view/screen/all_playlist.dart';
 import 'package:music_app/app/view/screen/playlist_songs.dart';
 import 'package:music_app/app/view/widget/error_snackbar.dart';
@@ -36,8 +37,9 @@ topContainer() {
                     album: state.songs[index].album!,
                     artist: state.songs[index].artist!,
                     title: state.songs[index].title,
-                    artUri: Uri.parse(
-                        'asset:///assets/images/default_artwork.jpg')));
+                    artUri: Uri.file(
+                        '${context.read<AppBloc>().state.appDocRoot!}/default_artwork.jpg')
+                        ));
           }));
           context.read<blocs.PlayerBloc>().add(blocs.PlayerDefaultPlaylist(
               defaultList: defaultList, libraryLength: state.songs.length));
@@ -181,7 +183,7 @@ Widget recentlyAdded() {
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 15),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
-                color: Theme.of(context).colorScheme.secondary,
+                color: Theme.of(context).colorScheme.primary,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -209,7 +211,8 @@ Widget recentlyAdded() {
                   return ListTile(
                     onTap: () {
                       context.read<blocs.PlayerBloc>().add(blocs.ChangePlaylist(
-                          playlist: createNowPlaylist(songList),
+                          playlist: createNowPlaylist(
+                              songList: songList, context: context),
                           songIndex: index));
                       Navigator.push(
                           context,

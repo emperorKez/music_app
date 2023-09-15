@@ -1,8 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:music_app/app/common/bottom_navigation.dart';
 import 'package:music_app/app/common/drawer.dart';
 import 'package:music_app/app/view/screen/settings.dart';
 import 'package:music_app/app/view/widget/home_widgets.dart';
+import 'package:music_app/app/view/widget/most_played.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -35,9 +37,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             drawer: const AppDrawer(),
-            // bottomNavigationBar: const BottomNavBar(
-            //   activeIndex: 0,
-            // ),
+            bottomNavigationBar: const BottomNavBar(
+              activeIndex: 0,
+            ),
             body: body()));
   }
 
@@ -59,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(
             height: 20,
           ),
-          // const MostPlayedSongsScreen(),
+          const MostPlayedSongsScreen(),
           const SizedBox(
             height: 20,
           ),

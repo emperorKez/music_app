@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:music_app/app/bloc/app_bloc/app_bloc.dart';
 import 'package:music_app/library/view/widget/show_dialog.dart';
 import 'package:music_app/player/screen/now_playing.dart';
 import 'package:music_app/player/utils/common.dart';
@@ -19,7 +20,8 @@ Widget durationWidget({required BuildContext context, required int duration}) {
       style: Theme.of(context).textTheme.bodySmall);
 }
 
-createNowPlaylist(List<SongModel> songList) {
+createNowPlaylist({required List<SongModel> songList, required BuildContext context}) {
+  final String appDocRoot = context.read<AppBloc>().state.appDocRoot!;
   return ConcatenatingAudioSource(
       children: List.generate(songList.length, (index) {
     return AudioSource.file(songList[index].data,
@@ -28,9 +30,10 @@ createNowPlaylist(List<SongModel> songList) {
             album: songList[index].album!,
             artist: songList[index].artist!,
             title: songList[index].title,
-            artUri: Uri.parse('asset:///assets/images/default_artwork.jpg')
+            artUri: Uri.file('$appDocRoot/default_artwork.jpg')
+            // artUri: Uri.parse('asset:///assets/images/default_artwork.jpg')
             //  artUri: Uri.dataFromBytes(LibraryRepository().fetchArtwork(songList[index].id) )
-            //  artUri: Uri.
+            //  artUri: Uri. 
             ));
   }));
 }
@@ -47,7 +50,7 @@ Widget gridViewWidget(List<SongModel> songList) {
         return GestureDetector(
           onTap: () {
             context.read<PlayerBloc>().add(ChangePlaylist(
-                playlist: createNowPlaylist(songList), songIndex: index));
+                playlist: createNowPlaylist(songList: songList, context: context), songIndex: index));
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -111,7 +114,7 @@ Widget listViewWidget(List<SongModel> songList) {
         return ListTile(
           onTap: () {
             context.read<PlayerBloc>().add(ChangePlaylist(
-                playlist: createNowPlaylist(songList), songIndex: index));
+                playlist: createNowPlaylist(songList: songList, context: context), songIndex: index));
             Navigator.push(
                 context,
                 MaterialPageRoute(
