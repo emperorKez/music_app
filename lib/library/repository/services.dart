@@ -50,8 +50,6 @@ class LibraryRepository {
     if (indexOfFavoritePlaylist < 0) {
       await createPlaylist(name: 'favorite');
       final playlists = await audioQuery.queryPlaylists();
-      print('4444444444444444444444444444444444');
-      print(playlists[0].data);
       return playlists;
     } else {
       return playlists;
@@ -105,7 +103,8 @@ class LibraryRepository {
   Future<void> deleteAudioFile({required File audioFile}) async {
     try {
       if (await audioFile.exists()) {
-        await audioFile.delete();
+       final response = await audioFile.delete();
+       print('this is delete response: $response');
 
         //     Directory? dir = await getExternalStorageDirectory();
         // final targetFile = Directory("${dir!.path}/books/$fileName.pdf");

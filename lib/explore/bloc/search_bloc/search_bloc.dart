@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:music_app/library/validator/search_form_validator.dart';
+import 'package:music_app/explore/validator/search_form_validator.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 part 'search_event.dart';
@@ -19,11 +19,11 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       final List<SongModel> songLibrary = event.songLibrary;
       List<SongModel> data = [];
       for (var song in songLibrary) {
-        if (song.title.contains(event.keyword) ||
-            (song.artist != null && song.artist!.contains(event.keyword))) {
-          data.add(song); 
-          print('this is the keyword: ${event.keyword}');
-          print(data);
+        if (song.title.toLowerCase().contains(event.keyword.toLowerCase())) {
+          data.add(song);
+        } else if (song.artist != null &&
+            song.artist!.toLowerCase().contains(event.keyword.toLowerCase())) {
+          data.add(song);
         }
       }
       emit(SearchLoaded(songs: data, isSearching: true));

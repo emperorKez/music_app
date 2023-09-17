@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:music_app/explore/bloc/search_bloc/search_bloc.dart';
 import 'package:music_app/library/bloc/library_fetch_bloc/library_fetch_bloc.dart';
-import 'package:music_app/library/bloc/search_bloc/search_bloc.dart';
 
 class SearchForm extends StatefulWidget {
   const SearchForm({super.key});
@@ -28,9 +28,8 @@ class _SearchFormState extends State<SearchForm> {
               keyboardType: TextInputType.text,
               autofocus: false,
               onChanged: (value) {
-                context
-                    .read<SearchBloc>()
-                    .add(SearchKeywordChanged(songLibrary: state.songs));
+                context.read<SearchBloc>().add(SearchKeywordChanged(
+                    keyword: value, songLibrary: state.songs));
               },
               decoration: const InputDecoration(
                   isDense: true,
@@ -46,10 +45,9 @@ class _SearchFormState extends State<SearchForm> {
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10)))),
               validator: (value) {
-                return null;
-
-                // state.isValidKeyword == false
-                //
+                //  return context.read<SearchBloc>().state.isValidKeyword == false
+                //     ? 'enter product name to search'
+                //     : null;
               },
               onEditingComplete: () =>
                   context.read<SearchBloc>().add(SearchCanceled()),

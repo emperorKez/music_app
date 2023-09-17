@@ -9,8 +9,8 @@ import 'package:music_app/app/bloc/app_bloc/app_bloc.dart';
 import 'package:music_app/app/common/theme.dart';
 import 'package:music_app/app/repository/app_repo.dart';
 import 'package:music_app/app/view/screen/home_screen.dart';
+import 'package:music_app/explore/bloc/search_bloc/search_bloc.dart';
 import 'package:music_app/library/bloc/library_fetch_bloc/library_fetch_bloc.dart';
-import 'package:music_app/library/bloc/search_bloc/search_bloc.dart';
 import 'package:music_app/library/repository/services.dart';
 import 'package:music_app/player/bloc/player_bloc/player_bloc.dart';
 

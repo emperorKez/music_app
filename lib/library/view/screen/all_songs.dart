@@ -5,12 +5,9 @@ import 'package:just_audio/just_audio.dart';
 import 'package:music_app/app/common/bottom_navigation.dart';
 import 'package:music_app/app/view/widget/error_snackbar.dart';
 import 'package:music_app/library/bloc/library_fetch_bloc/library_fetch_bloc.dart';
-import 'package:music_app/library/bloc/search_bloc/search_bloc.dart';
 import 'package:music_app/library/view/widget/library_widgets.dart';
-import 'package:music_app/library/view/widget/search_form.dart';
-import 'package:music_app/library/view/widget/show_dialog.dart';
+import 'package:music_app/explore/view/widget/search_form.dart';
 import 'package:music_app/player/bloc/player_bloc/player_bloc.dart';
-import 'package:music_app/player/screen/now_playing.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 enum SortSong { dateAdded, title }
@@ -38,7 +35,7 @@ class _AllSongsScreenState extends State<AllSongsScreen> {
         child: Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const SearchForm(),
+        title: const Text('Local Library'),
         actions: [
           IconButton(
               onPressed: () {
@@ -82,7 +79,7 @@ class _AllSongsScreenState extends State<AllSongsScreen> {
               ? const Center(
                   child: Text('you do not have any song on your device'),
                 )
-              : songView(songList: songList);
+              : isGridView ? gridViewWidget(songList) : listViewWidget(songList);
         } else {
           return const Center(
             child: CircularProgressIndicator(),
@@ -91,81 +88,5 @@ class _AllSongsScreenState extends State<AllSongsScreen> {
       },
     );
   }
-
-  Widget songView({required List<SongModel> songList}) {
-    return BlocConsumer<SearchBloc, SearchState>(
-      listener: (context, state) {
-        // TODO: implement listener
-      },
-      builder: (context, state) {
-        if (state.isSearching && state is SearchLoading) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (state.isSearching && state is SearchLoaded) {
-          return searchListView(state.songs ?? []);
-        } else {
-          return listViewWidget(songList);
-        }
-
-        //   return isGridView
-        //       ? gridViewWidget(state.songs ?? [])
-        //       : listViewWidget(state.songs ?? []);
-        // } else {
-        //   return isGridView
-        //       ? gridViewWidget(songList)
-        //       : listViewWidget(songList);
-        // }
-      },
-    );
-  }
-
-  Widget searchListView(List<SongModel> songList) {
-  return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      itemCount: songList.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          onTap: () {
-            context.read<PlayerBloc>().add(ChangePlaylist(
-                playlist: createNowPlaylist(songList: songList, context: context), songIndex: index));
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => NowPlayingScreen(
-                          player: context.read<PlayerBloc>().state.player!,
-                        )));
-          },
-          onLongPress: () {
-            //Todo
-            showOnPressedDialog(context: context, song: songList[index]);
-          },
-          // leading: AspectRatio(
-          //   aspectRatio: 1,
-          //   child: ClipRRect(
-          //       borderRadius: BorderRadius.circular(5),
-          //       child: artworkWidget(
-          //           audioId: songList[index].id,
-          //           artworkType: ArtworkType.AUDIO)),
-          // ),
-          title: Text(
-            songList[index].title,
-            softWrap: true,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          subtitle: Text(
-            songList[index].artist!,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          trailing: durationWidget(
-              context: context, duration: songList[index].duration!),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 0),
-          horizontalTitleGap: 10,
-          minVerticalPadding: 0,
-        );
-      });
-}
+  
 }

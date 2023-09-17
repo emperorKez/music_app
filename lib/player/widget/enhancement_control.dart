@@ -60,14 +60,14 @@ class EnhancementControl extends StatelessWidget {
     return StreamBuilder<double>(
       stream: player.speedStream,
       builder: (context, snapshot) => IconButton(
-        icon: Text("${snapshot.data?.toStringAsFixed(2)}x",
+        icon: Text("${snapshot.data?.toStringAsFixed(1)}x",
             style: const TextStyle(fontWeight: FontWeight.bold)),
         onPressed: () {
           showVerticalSliderDialog(
               context: context,
               // title: "Adjust speed",
-              divisions: 7,
-              min: 0.25,
+              divisions: 3,
+              min: 0.5,
               max: 2,
               value: player.speed,
               stream: player.speedStream,

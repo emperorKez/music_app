@@ -20,7 +20,8 @@ Widget durationWidget({required BuildContext context, required int duration}) {
       style: Theme.of(context).textTheme.bodySmall);
 }
 
-createNowPlaylist({required List<SongModel> songList, required BuildContext context}) {
+createNowPlaylist(
+    {required List<SongModel> songList, required BuildContext context}) {
   final String appDocRoot = context.read<AppBloc>().state.appDocRoot!;
   return ConcatenatingAudioSource(
       children: List.generate(songList.length, (index) {
@@ -33,7 +34,7 @@ createNowPlaylist({required List<SongModel> songList, required BuildContext cont
             artUri: Uri.file('$appDocRoot/default_artwork.jpg')
             // artUri: Uri.parse('asset:///assets/images/default_artwork.jpg')
             //  artUri: Uri.dataFromBytes(LibraryRepository().fetchArtwork(songList[index].id) )
-            //  artUri: Uri. 
+            //  artUri: Uri.
             ));
   }));
 }
@@ -50,7 +51,9 @@ Widget gridViewWidget(List<SongModel> songList) {
         return GestureDetector(
           onTap: () {
             context.read<PlayerBloc>().add(ChangePlaylist(
-                playlist: createNowPlaylist(songList: songList, context: context), songIndex: index));
+                playlist:
+                    createNowPlaylist(songList: songList, context: context),
+                songIndex: index));
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -107,50 +110,56 @@ Widget gridViewWidget(List<SongModel> songList) {
 }
 
 Widget listViewWidget(List<SongModel> songList) {
-  return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      itemCount: songList.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          onTap: () {
-            context.read<PlayerBloc>().add(ChangePlaylist(
-                playlist: createNowPlaylist(songList: songList, context: context), songIndex: index));
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => NowPlayingScreen(
-                          player: context.read<PlayerBloc>().state.player!,
-                        )));
-          },
-          onLongPress: () {
-            //Todo
-            showOnPressedDialog(context: context, song: songList[index]);
-          },
-          leading: AspectRatio(
-            aspectRatio: 1,
-            child: ClipRRect(
-                borderRadius: BorderRadius.circular(5),
-                child: artworkWidget(
-                    audioId: songList[index].id,
-                    artworkType: ArtworkType.AUDIO)),
-          ),
-          title: Text(
-            songList[index].title,
-            softWrap: true,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          subtitle: Text(
-            songList[index].artist!,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          trailing: durationWidget(
-              context: context, duration: songList[index].duration!),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 0),
-          horizontalTitleGap: 10,
-          minVerticalPadding: 0,
-        );
-      });
+  return songList.isEmpty
+      ? const Center(
+          child: Text('No Song found'),
+        )
+      : ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          itemCount: songList.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              onTap: () {
+                context.read<PlayerBloc>().add(ChangePlaylist(
+                    playlist:
+                        createNowPlaylist(songList: songList, context: context),
+                    songIndex: index));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => NowPlayingScreen(
+                              player: context.read<PlayerBloc>().state.player!,
+                            )));
+              },
+              onLongPress: () {
+                //Todo
+                showOnPressedDialog(context: context, song: songList[index]);
+              },
+              leading: AspectRatio(
+                aspectRatio: 1,
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: artworkWidget(
+                        audioId: songList[index].id,
+                        artworkType: ArtworkType.AUDIO)),
+              ),
+              title: Text(
+                songList[index].title,
+                softWrap: true,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              subtitle: Text(
+                songList[index].artist!,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              trailing: durationWidget(
+                  context: context, duration: songList[index].duration!),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+              horizontalTitleGap: 10,
+              minVerticalPadding: 0,
+            );
+          });
 }

@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -146,9 +143,11 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
               leading: IconButton(
                   onPressed: () => Navigator.pop(context),
                   icon: const Icon(
-                    Icons.arrow_back_ios_new,
+                    Icons.keyboard_arrow_down,
                     color: Colors.white,
                   )),
+              title: const Text('Now Playing'),
+              centerTitle: true,
               actions: [
                 IconButton(
                     onPressed: () {
@@ -192,21 +191,21 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 10,),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       // Expanded(
-                        // child: 
-                        AspectRatio(
-                          aspectRatio: 1,
-                          child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: artworkWidget(
-                                  audioId: int.parse(metadata.id),
-                                  artworkType: ArtworkType.AUDIO)
-                                  ),
-                        ),
+                      // child:
+                      AspectRatio(
+                        aspectRatio: 1,
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: artworkWidget(
+                                audioId: int.parse(metadata.id),
+                                artworkType: ArtworkType.AUDIO)),
+                      ),
                       // ),
 
-                      
                       songDetail(metadata),
                       // : const SizedBox(),
                       const SizedBox(
@@ -228,10 +227,9 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
                             // print('metadata Artist = ${metadata.artist}');
 
                             return EnhancementControl(
-                              player: player,
-                              song: state.songs[state.songs.indexWhere(
-                                      (e) => e.id == int.parse(metadata.id))]
-                            );
+                                player: player,
+                                song: state.songs[state.songs.indexWhere(
+                                    (e) => e.id == int.parse(metadata.id))]);
                           } else {
                             return const CircularProgressIndicator();
                           }
@@ -263,9 +261,12 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(metadata.title, 
-        style: Theme.of(context).textTheme.bodyMedium, 
-        ).animate().moveX() ,
+        Text(
+          metadata.title,
+          maxLines: 2,
+          softWrap: true,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ).animate().fade(),
         // AnimatedTextKit(
         //     repeatForever: true,
         //     pause: Duration.zero,
@@ -279,6 +280,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
         //     ]),
         Text(metadata.artist!,
             overflow: TextOverflow.ellipsis,
+            maxLines: 1,
             style: Theme.of(context).textTheme.bodySmall)
       ],
     );

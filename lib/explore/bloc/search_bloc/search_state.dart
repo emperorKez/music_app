@@ -13,7 +13,7 @@ class SearchState {
 
   // SearchState copyWith({String? keyword, List<ProductItem>? products}) {
   //   return SearchState(
-  //       keyword: keyword ?? this.keyword, products: products ?? this.products);
+  //       keyword: keyword ??  this.keyword, products: products ?? this.products); 
   // }
 
   // @override
